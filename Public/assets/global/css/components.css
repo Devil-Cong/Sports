@@ -49,7 +49,7 @@ General reset
 /* Set default body */
 body {
   color: #333333;
-  font-family: "Open Sans", sans-serif;
+  font-family: "Open Sans", 'Microsoft Yahei', sans-serif;
   padding: 0px !important;
   margin: 0px !important;
   font-size: 13px;

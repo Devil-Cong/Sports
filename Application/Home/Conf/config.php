@@ -3,6 +3,12 @@ return array(
 	//'配置项'=>'配置值'
 	'TMPL_L_DELIM'    => '<{',
 	'TMPL_R_DELIM'    => '}>',
+
+	'TMPL_PARSE_STRING'     => array(
+		'__ASSETS__'           => __ROOT__ . '/Public/assets',
+		'__AUI_ART_TEMPLATE__' => __ROOT__ . '/Public/aui-artTemplate',
+	),
+
 	'SHOW_PAGE_TRACE' => true, //显示调试面板
 	/*数据库配置*/
 	'DB_TYPE'         => 'mysql', // 数据库类型
