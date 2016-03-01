@@ -46,7 +46,7 @@
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn blue submit">Save changes</button>
-                                    <button type="button" class="btn default close" data-dismiss="modal">Close</button>
+                                    <button type="button" class="btn default closeBtn" data-dismiss="modal">Close</button>
                                 </div>
                             </div>
                             <!-- /.modal-content -->
@@ -56,21 +56,21 @@
                     <!-- /.modal -->
                     <!-- END SAMPLE PORTLET CONFIGURATION MODAL FORM-->
                     <!-- BEGIN PAGE HEADER-->
-                    <h3 class="page-title">Dashboard</h3>
+                    <h3 class="page-title">Place Manage</h3>
                     <div class="page-bar">
                         <ul class="page-breadcrumb">
                             <li>
                                 <i class="fa fa-home"></i>
-                                <a href="index.html">Home</a>
+                                <span>Home</span>
                                 <i class="fa fa-angle-right"></i>
                             </li>
                             <li>
-                                <a href="#">Dashboard</a>
+                                <span>Place Manage</span>
                             </li>
                         </ul>
                         <div class="page-toolbar">
                             <div class="btn-group pull-right">
-                                <a href="#portlet-config" data-toggle="modal" class="config btn btn-fit-height green-haze"> Add Options <i class="fa fa-plus"></i> </a>
+                                <a href="#portlet-config" data-toggle="modal" class="btn btn-fit-height green-haze" onclick="add()"> Add <i class="fa fa-plus"></i> </a>
                             </div>
                         </div>
                     </div>
@@ -82,12 +82,12 @@
                             <div class="portlet box red-intense">
                                 <div class="portlet-title">
                                     <div class="caption">
-                                        <i class="fa fa-globe"></i>Columns Reorder
+                                        <i class="fa fa-globe"></i>Place List
                                     </div>
                                     <div class="tools">
                                         <a href="javascript:;" class="collapse">
                                         </a>
-                                        <a href="javascript:;" class="reload">
+                                        <a href="javascript:;" class="reload" onclick="reloadData()">
                                         </a>
                                     </div>
                                 </div>
@@ -96,57 +96,33 @@
                                         <thead>
                                             <tr>
                                                 <th>
-                                                    Rendering engine
+                                                    ID
                                                 </th>
                                                 <th>
-                                                    Browser
-                                                </th>
+                                                    Title
+                                                </th>          
                                                 <th class="hidden-xs">
-                                                    Platform(s)
-                                                </th>
+                                                    Describe
+                                                </th>          
                                                 <th class="hidden-xs">
-                                                    Engine version
-                                                </th>
+                                                    Address
+                                                </th>                                                
                                                 <th class="hidden-xs">
-                                                    CSS grade
+                                                    State
+                                                </th>                                                
+                                                <th class="hidden-xs">
+                                                    Default Price
+                                                </th> 
+                                                <th class="hidden-xs">
+                                                    Create Time
+                                                </th>       
+                                                <th class="hidden-xs">
+                                                    Operation
                                                 </th>
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <tr>
-                                                <td>
-                                                    Trident
-                                                </td>
-                                                <td>
-                                                    Internet Explorer 4.0
-                                                </td>
-                                                <td>
-                                                    Win 95+
-                                                </td>
-                                                <td>
-                                                    4
-                                                </td>
-                                                <td>
-                                                    X
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>
-                                                    Trident
-                                                </td>
-                                                <td>
-                                                    Internet Explorer 6
-                                                </td>
-                                                <td>
-                                                    Win 98+
-                                                </td>
-                                                <td>
-                                                    6
-                                                </td>
-                                                <td>
-                                                    <a onclick="test()">lllll</a>
-                                                </td>
-                                            </tr>
+                                            
                                         </tbody>
                                     </table>
                                 </div>
@@ -164,6 +140,89 @@
         <include file="Public/footer" />
         <!-- END INCLUDE FOOTER -->
     </div>
+    <!-- BEGIN JAVASCRIPTS TEMPLATE -->
+    <script id="tableBody" type="text/html">
+        {{each retdata as value i}}
+        <tr data-datastr="{{value.dataStr}}">
+            <td>
+                {{value.placeId}}
+            </td>
+            <td>
+                {{value.title}}
+            </td>
+            <td>
+                {{value.describe}}
+            </td>
+            <td>
+                {{value.address}}
+            </td>
+            <td>
+                {{if value.state == 1 }}<span class="label label-success">Enable</span>{{/if}}
+                {{if value.state == 2 }}<span class="label label-danger">Disable</span>{{/if}}
+            </td>
+            <td>
+                {{value.defaultPrice}}
+            </td>
+            <td>
+                {{value.createTime}}
+            </td>
+            <td>
+                <a href="#portlet-config" data-toggle="modal" class="badge badge-success badge-roundless">Calendar</a>
+                <a href="#portlet-config" data-toggle="modal" class="badge badge-warning badge-roundless" onclick="edit(this)">Edit</a>
+                <a href="#portlet-config" data-toggle="modal" class="badge badge-danger badge-roundless" onclick="del(this)">Delete</a>
+            </td>
+        </tr>
+        {{/each}}
+    </script>
+    <script id="myForm" type="text/html">
+        <form class="myForm form-horizontal form-bordered form-row-stripped">
+            <div class="form-body">
+                <input type="hidden" class="form-control" name="placeId" value="{{placeId}}"/>
+                <div class="form-group">
+                    <label class="control-label col-md-3">Title</label>
+                    <div class="col-md-9">
+                        <input type="text" placeholder="Title" class="form-control" name="title" value="{{title}}"/>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-md-3">Describe</label>
+                    <div class="col-md-9">
+                        <textarea class="form-control" name="describe" rows="3">{{describe}}</textarea>
+                    </div>
+                </div>        
+                <div class="form-group">
+                    <label class="control-label col-md-3">Address</label>
+                    <div class="col-md-9">
+                        <input type="text" placeholder="Address" class="form-control" name="address" value="{{address}}"/>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-md-3">Default Price</label>
+                    <div class="col-md-9">
+                        <input type="text" placeholder="Default Price" class="form-control" name="defaultPrice" value="{{defaultPrice}}" {{if operType == '2' }}readonly{{/if}}/>
+                    </div>
+                </div>                         
+                <div class="form-group">
+                    <label class="control-label col-md-3">State</label>
+                    <div class="col-md-9">
+                        <div class="radio-list" data-error-container="#state_error">
+                            <label>
+                            <input type="radio" name="state" value="1" {{if state == '1' }}checked{{/if}}/>
+                            Enable </label>
+                            <label>
+                            <input type="radio" name="state" value="2" {{if state == '2' }}checked{{/if}}/>
+                            Disable </label>
+                        </div>                        
+                        <div id="state_error"></div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </script>
+    <script id="delTip" type="text/html">
+        Confirm delete <span class="label label-danger">{{title}}</span> ?
+    </script>
+    <!-- END JAVASCRIPTS TEMPLATE -->
     <!-- BEGIN JAVASCRIPTS(Load javascripts at bottom, this will reduce page load time) -->
     <!-- BEGIN CORE PLUGINS -->
     <!--[if lt IE 9]>
@@ -179,7 +238,8 @@
     <script type="text/javascript" src="__ASSETS__/global/plugins/datatables/media/js/jquery.dataTables.min.js"></script>
     <script type="text/javascript" src="__ASSETS__/global/plugins/datatables/extensions/ColReorder/js/dataTables.colReorder.min.js"></script>
     <script type="text/javascript" src="__ASSETS__/global/plugins/datatables/plugins/bootstrap/dataTables.bootstrap.js"></script>
-    <script type="text/javascript" src="__ASSETS__/global/plugins/bootstrap-toastr/toastr.min.js"></script>
+    <script type="text/javascript" src="__ASSETS__/global/plugins/bootstrap-toastr/toastr.min.js"></script>    
+    <script src="__ASSETS__/global/plugins/jquery-validation/js/jquery.validate.min.js" type="text/javascript"></script>
     <!-- END PAGE LEVEL PLUGINS -->
     <!-- BEGIN PAGE LEVEL SCRIPTS -->
     <script type="text/javascript" src="__ASSETS__/global/scripts/metronic.js"></script>
@@ -188,13 +248,13 @@
     <!-- BEGIN DEVELOP SCRIPTS -->
     <script type="text/javascript" src="__PUBLIC__/scripts/lib/config.js"></script>
     <script type="text/javascript" src="__PUBLIC__/scripts/lib/template.js"></script>
-    <script type="text/javascript" src="__PUBLIC__/scripts/models/index.js"></script>
+    <script type="text/javascript" src="__PUBLIC__/scripts/models/placeList.js"></script>
     <!-- END DEVELOP SCRIPTS -->
     <script>
     jQuery(document).ready(function() {
         Metronic.init(); // init metronic core componets
         Layout.init(); // init layout
-        Index.init();
+        PlaceList.init();
     });
     </script>
     <!-- END JAVASCRIPTS -->

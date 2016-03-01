@@ -58,9 +58,9 @@ var Login = function() {
         },
         loginAjax = function() {
             var jsonData = JSON.stringify({
-                account: $('input[name="account"]').val().trim(),
-                password: $('input[name="password"]').val().trim(),
-                remember: $('input[name="remember"]:checked').val()
+                account     : $('input[name="account"]').val().trim(),
+                password    : $('input[name="password"]').val().trim(),
+                remember    : $('input[name="remember"]:checked').val()
             });
             $.ajax({
                 url: 'http://' + sports.phpServiceInterface + '/index.php/Home/ManageInterface/login',

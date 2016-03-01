@@ -91,22 +91,22 @@ var Metronic = function() {
     // Handles portlet tools & actions
     var handlePortletTools = function() {
         // handle portlet remove
-        $('body').on('click', '.portlet > .portlet-title > .tools > a.remove', function(e) {
-            e.preventDefault();
-            var portlet = $(this).closest(".portlet");
+        // $('body').on('click', '.portlet > .portlet-title > .tools > a.remove', function(e) {
+        //     e.preventDefault();
+        //     var portlet = $(this).closest(".portlet");
 
-            if ($('body').hasClass('page-portlet-fullscreen')) {
-                $('body').removeClass('page-portlet-fullscreen');
-            }
+        //     if ($('body').hasClass('page-portlet-fullscreen')) {
+        //         $('body').removeClass('page-portlet-fullscreen');
+        //     }
 
-            portlet.find('.portlet-title .fullscreen').tooltip('destroy');
-            portlet.find('.portlet-title > .tools > .reload').tooltip('destroy');
-            portlet.find('.portlet-title > .tools > .remove').tooltip('destroy');
-            portlet.find('.portlet-title > .tools > .config').tooltip('destroy');
-            portlet.find('.portlet-title > .tools > .collapse, .portlet > .portlet-title > .tools > .expand').tooltip('destroy');
+        //     portlet.find('.portlet-title .fullscreen').tooltip('destroy');
+        //     portlet.find('.portlet-title > .tools > .reload').tooltip('destroy');
+        //     portlet.find('.portlet-title > .tools > .remove').tooltip('destroy');
+        //     portlet.find('.portlet-title > .tools > .config').tooltip('destroy');
+        //     portlet.find('.portlet-title > .tools > .collapse, .portlet > .portlet-title > .tools > .expand').tooltip('destroy');
 
-            portlet.remove();
-        });
+        //     portlet.remove();
+        // });
 
         // handle portlet fullscreen
         $('body').on('click', '.portlet > .portlet-title .fullscreen', function(e) {
@@ -130,57 +130,57 @@ var Metronic = function() {
             }
         });
 
-        $('body').on('click', '.portlet > .portlet-title > .tools > a.reload', function(e) {
-            e.preventDefault();
-            var el = $(this).closest(".portlet").children(".portlet-body");
-            var url = $(this).attr("data-url");
-            var error = $(this).attr("data-error-display");
-            if (url) {
-                Metronic.blockUI({
-                    target: el,
-                    animate: true,
-                    overlayColor: 'none'
-                });
-                $.ajax({
-                    type: "GET",
-                    cache: false,
-                    url: url,
-                    dataType: "html",
-                    success: function(res) {
-                        Metronic.unblockUI(el);
-                        el.html(res);
-                    },
-                    error: function(xhr, ajaxOptions, thrownError) {
-                        Metronic.unblockUI(el);
-                        var msg = 'Error on reloading the content. Please check your connection and try again.';
-                        if (error == "toastr" && toastr) {
-                            toastr.error(msg);
-                        } else if (error == "notific8" && $.notific8) {
-                            $.notific8('zindex', 11500);
-                            $.notific8(msg, {
-                                theme: 'ruby',
-                                life: 3000
-                            });
-                        } else {
-                            alert(msg);
-                        }
-                    }
-                });
-            } else {
-                // for demo purpose
-                Metronic.blockUI({
-                    target: el,
-                    animate: true,
-                    overlayColor: 'none'
-                });
-                window.setTimeout(function() {
-                    Metronic.unblockUI(el);
-                }, 1000);
-            }
-        });
+        // $('body').on('click', '.portlet > .portlet-title > .tools > a.reload', function(e) {
+        //     e.preventDefault();
+        //     var el = $(this).closest(".portlet").children(".portlet-body");
+        //     var url = $(this).attr("data-url");
+        //     var error = $(this).attr("data-error-display");
+        //     if (url) {
+        //         Metronic.blockUI({
+        //             target: el,
+        //             animate: true,
+        //             overlayColor: 'none'
+        //         });
+        //         $.ajax({
+        //             type: "GET",
+        //             cache: false,
+        //             url: url,
+        //             dataType: "html",
+        //             success: function(res) {
+        //                 Metronic.unblockUI(el);
+        //                 el.html(res);
+        //             },
+        //             error: function(xhr, ajaxOptions, thrownError) {
+        //                 Metronic.unblockUI(el);
+        //                 var msg = 'Error on reloading the content. Please check your connection and try again.';
+        //                 if (error == "toastr" && toastr) {
+        //                     toastr.error(msg);
+        //                 } else if (error == "notific8" && $.notific8) {
+        //                     $.notific8('zindex', 11500);
+        //                     $.notific8(msg, {
+        //                         theme: 'ruby',
+        //                         life: 3000
+        //                     });
+        //                 } else {
+        //                     alert(msg);
+        //                 }
+        //             }
+        //         });
+        //     } else {
+        //         // for demo purpose
+        //         Metronic.blockUI({
+        //             target: el,
+        //             animate: true,
+        //             overlayColor: 'none'
+        //         });
+        //         window.setTimeout(function() {
+        //             Metronic.unblockUI(el);
+        //         }, 1000);
+        //     }
+        // });
 
         // load ajax data on page init
-        $('.portlet .portlet-title a.reload[data-load="true"]').click();
+        // $('.portlet .portlet-title a.reload[data-load="true"]').click();
 
         $('body').on('click', '.portlet > .portlet-title > .tools > .collapse, .portlet .portlet-title > .tools > .expand', function(e) {
             e.preventDefault();

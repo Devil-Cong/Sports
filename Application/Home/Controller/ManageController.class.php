@@ -15,17 +15,19 @@ class ManageController extends BaseController {
 		$this->display();
 	}
 
+	public function courseList() {
+		$this->assign('urlInfo', CONTROLLER_NAME . '/' . ACTION_NAME);
+		$this->display();
+	}
+
+	public function placeList() {
+		$this->assign('urlInfo', CONTROLLER_NAME . '/' . ACTION_NAME);
+		$this->display();
+	}
+
 	// 编辑用户信息
 	public function editUser() {
-		// $jsonData      = json_decode($_POST['json_data'], true);
-		$jsonData['userName'] = 'AmLiu';
-		$jsonData['account']  = '13560448557';
-		$jsonData['password'] = '123456';
-		$jsonData['state']    = '1';
-		$jsonData['operType'] = '1';
-		$jsonData['userType'] = '1';
-		$jsonData['discount'] = '75';
-
+		$jsonData       = json_decode($_POST['json_data'], true);
 		$user           = M('User');
 		$map['account'] = $jsonData['account'];
 
@@ -36,7 +38,7 @@ class ManageController extends BaseController {
 
 				// 判断是否会员
 				if ($jsonData['userType'] == '2') {
-					$data['discount'] = $jsonData['discount'];
+					$data['discount'] = $jsonData['discount'] * 10;
 				}
 				$data['account']     = $jsonData['account'];
 				$data['state']       = $jsonData['state'];
@@ -49,14 +51,14 @@ class ManageController extends BaseController {
 				$result              = $user->add($data);
 				if ($result) {
 					$ret['retcode'] = '1';
-					$ret['retmsg']  = '新增用户成功';
+					$ret['retmsg']  = 'Add user success.';
 				} else {
 					$ret['retcode'] = '-99';
-					$ret['retmsg']  = '新增用户失败';
+					$ret['retmsg']  = 'Add user fail.';
 				}
 			} else {
 				$ret['retcode'] = '-1';
-				$ret['retmsg']  = '该账户已存在';
+				$ret['retmsg']  = 'The user is exist.';
 			}
 		}
 
@@ -65,7 +67,7 @@ class ManageController extends BaseController {
 			$result = $user->where($map)->find();
 			if ($result) {
 				if ($jsonData['userType'] == '2') {
-					$result['discount'] = $jsonData['discount'];
+					$result['discount'] = $jsonData['discount'] * 10;
 				}
 				$result['state']     = $jsonData['state'];
 				$result['user_type'] = $jsonData['userType'];
@@ -74,18 +76,162 @@ class ManageController extends BaseController {
 				$result['password2'] = $jsonData['password'];
 				$result              = $user->save($result);
 				if ($result !== false) {
-					$ret['retcode'] = '2';
-					$ret['retmsg']  = '更新用户成功';
+					$ret['retcode'] = '1';
+					$ret['retmsg']  = 'Update user success.';
 				} else {
 					$ret['retcode'] = '-99';
-					$ret['retmsg']  = '更新用户失败';
+					$ret['retmsg']  = 'Update user fail.';
 				}
 			} else {
-				$ret['retcode'] = '-2';
-				$ret['retmsg']  = '该账户不存在';
+				$ret['retcode'] = '-1';
+				$ret['retmsg']  = 'The user does not exist.';
 			}
 		}
 
+		echo json_encode($ret, JSON_UNESCAPED_UNICODE);
+	}
+
+	// 删除用户
+	public function deleteUser() {
+		$jsonData        = json_decode($_POST['json_data'], true);
+		$user            = M('User');
+		$map['user_id']  = $jsonData['userId'];
+		$result          = $user->where($map)->find();
+		$result['state'] = '3';
+		$result          = $user->save($result);
+		if ($result !== false) {
+			$ret['retcode'] = '1';
+			$ret['retmsg']  = 'Delete user success.';
+		} else {
+			$ret['retcode'] = '-99';
+			$ret['retmsg']  = 'Delete user fail.';
+		}
+		echo json_encode($ret, JSON_UNESCAPED_UNICODE);
+	}
+
+	// 编辑课程
+	public function editCourse() {
+		$jsonData = json_decode($_POST['json_data'], true);
+		$course   = M('Course');
+
+		// 新增课程
+		if ($jsonData['operType'] == '1') {
+			$data['course_type']     = $jsonData['courseType'];
+			$data['title']           = $jsonData['title'];
+			$data['describe']        = $jsonData['describe'];
+			$data['state']           = $jsonData['state'];
+			$data['people_capacity'] = $jsonData['peopleCapacity'];
+			$data['coach']           = $jsonData['coach'];
+			$data['times']           = $jsonData['times'];
+			$data['classroom']       = $jsonData['classroom'];
+			$data['price']           = $jsonData['price'] * 100;
+			$data['create_time']     = date('Y-m-d H:i:s');
+			$result                  = $course->add($data);
+			if ($result) {
+				$ret['retcode'] = '1';
+				$ret['retmsg']  = 'Add course success.';
+			} else {
+				$ret['retcode'] = '-99';
+				$ret['retmsg']  = 'Add course fail.';
+			}
+		}
+
+		// 修改课程
+		if ($jsonData['operType'] == '2') {
+			$map['course_id'] = $jsonData['courseId'];
+			$result           = $course->where($map)->find();
+			if ($result) {
+				$result['course_type']     = $jsonData['courseType'];
+				$result['title']           = $jsonData['title'];
+				$result['describe']        = $jsonData['describe'];
+				$result['state']           = $jsonData['state'];
+				$result['people_capacity'] = $jsonData['peopleCapacity'];
+				$result['coach']           = $jsonData['coach'];
+				$result['times']           = $jsonData['times'];
+				$result['classroom']       = $jsonData['classroom'];
+				$result['price']           = $jsonData['price'] * 100;
+				$result                    = $course->save($result);
+				if ($result !== false) {
+					$ret['retcode'] = '1';
+					$ret['retmsg']  = 'Update course success.';
+				} else {
+					$ret['retcode'] = '-99';
+					$ret['retmsg']  = 'Update course fail.';
+				}
+			} else {
+				$ret['retcode'] = '-1';
+				$ret['retmsg']  = 'The course does not exist.';
+			}
+		}
+
+		echo json_encode($ret, JSON_UNESCAPED_UNICODE);
+	}
+
+	// 删除课程
+	public function deleteCourse() {
+		$jsonData         = json_decode($_POST['json_data'], true);
+		$course           = M('Course');
+		$map['course_id'] = $jsonData['courseId'];
+		$result           = $course->where($map)->find();
+		$result['state']  = '3';
+		$result           = $course->save($result);
+		if ($result !== false) {
+			$ret['retcode'] = '1';
+			$ret['retmsg']  = 'Delete course success.';
+		} else {
+			$ret['retcode'] = '-99';
+			$ret['retmsg']  = 'Delete course fail.';
+		}
+		echo json_encode($ret, JSON_UNESCAPED_UNICODE);
+	}
+
+	// 编辑场地
+	public function editPlace() {
+		$jsonData = json_decode($_POST['json_data'], true);
+		$place    = M('Place');
+
+		// 新增场地
+		if ($jsonData['operType'] == '1') {
+			$data['title']         = $jsonData['title'];
+			$data['describe']      = $jsonData['describe'];
+			$data['state']         = $jsonData['state'];
+			$data['address']       = $jsonData['address'];
+			$data['default_price'] = $jsonData['defaultPrice'] * 100;
+			$data['create_time']   = date('Y-m-d H:i:s');
+			$result                = $place->add($data);
+			if ($result) {
+				$ret['retcode'] = '1';
+				$ret['retmsg']  = 'Add place success.';
+			} else {
+				$ret['retcode'] = '-99';
+				$ret['retmsg']  = 'Add place fail.';
+			}
+		}
+
+		// 修改场地
+		if ($jsonData['operType'] == '2') {
+			$map['place_id'] = $jsonData['placeId'];
+			$result          = $place->where($map)->find();
+			if ($result) {
+				$result['title']         = $jsonData['title'];
+				$result['describe']      = $jsonData['describe'];
+				$result['state']         = $jsonData['state'];
+				$result['address']       = $jsonData['address'];
+				$result['default_price'] = $jsonData['defaultPrice'] * 100;
+				$result['create_time']   = date('Y-m-d H:i:s');
+				$result                  = $place->save($result);
+				if ($result !== false) {
+					$ret['retcode'] = '1';
+					$ret['retmsg']  = 'Update place success.';
+				} else {
+					$ret['retcode'] = '-99';
+					$ret['retmsg']  = 'Update place fail.';
+				}
+			} else {
+				$ret['retcode'] = '-1';
+				$ret['retmsg']  = 'The place does not exist.';
+			}
+		}
 		echo json_encode($ret, JSON_UNESCAPED_UNICODE);
 	}
 }

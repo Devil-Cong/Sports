@@ -39,15 +39,17 @@ toastr.options = {
 	"onclick"			: null,
 	"showDuration"		: 500,
 	"hideDuration"		: 500,
-	"timeOut"			: 1500,
+	"timeOut"			: 2000,
 	"extendedTimeOut"	: 500,
 	"showEasing" 		: "swing",
 	"hideEasing" 		: "linear",
 	"showMethod" 		: "fadeIn",
 	"hideMethod" 		: "fadeOut"
 };
+// 类型: success/info/warning/error
 
 jQuery.validator.addMethod("isMobile", function(value, element) {    
     var length = value.length;    
     return this.optional(element) || (length == 11 && /^(((13[0-9]{1})|(15[0-9]{1})|(18[0-9]{1}))+\d{8})$/.test(value));    
 }, "Mobile phone number is wrong");
+

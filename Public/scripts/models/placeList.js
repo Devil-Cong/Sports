@@ -1,10 +1,10 @@
-var UserList = function() {
+var PlaceList = function() {
     var initTable = function() {
         // 读取多功能表格默认配置
         var options = sports.dataTableOptions;
 
         // 重写部分配置
-        options.columnDefs[0].targets   = [3,6,9,10]; // 禁止哪一列排序
+        options.columnDefs[0].targets   = [1,2,3,6,7]; // 禁止哪一列排序
         options.order[0]                = [0,'asc']; // 初始化默认那一列排序
 
         var table               = $('#myTable'),
@@ -15,7 +15,7 @@ var UserList = function() {
     },
     getDataAjax = function(type){
         $.ajax({
-            url: 'http://' + sports.phpServiceInterface + '/index.php/Home/ManageInterface/queryAllUser',
+            url: 'http://' + sports.phpServiceInterface + '/index.php/Home/ManageInterface/queryAllPlace',
             data: 'json_data=',
             type: 'post',
             cache: false,
@@ -57,45 +57,37 @@ var UserList = function() {
             focusInvalid: true,
             ignore: '',
             rules: {
-                userName: {
+                title: {
                     required: true
                 },
-                account: {
-                    required: true,
-                    isMobile: true
+                describe: {
+                    required: true
                 },
-                password: {
+                address: {
+                    required: true
+                },
+                defaultPrice: {
                     required: true
                 },
                 state: {
-                    required: true
-                },
-                userType: {
-                    required: true
-                },
-                discount: {
                     required: true
                 }
             },
             messages: {
-                userName: {
-                    required: "User Name is required."
+                title: {
+                    required: "Title is required."
                 },
-                account: {
-                    required: "Account is required.",
-                    isMobile: "Account must be mobile phone number"
+                describe: {
+                    required: "Describe is required."
                 },
-                password: {
-                    required: "Password is required."
+                address: {
+                    required: "Address is required."
+                },
+                defaultPrice: {
+                    required: "Default Price is required."
                 },
                 state: {
                     required: "State is required."
-                },
-                userType: {
-                    required: "User Type is required."
-                },
-                discount: {
-                    required: "Discount is required."
                 }
             },
             invalidHandler: function(event, validator) {
@@ -123,7 +115,7 @@ var UserList = function() {
     },
     submitUserData = function(jsonData){
         $.ajax({
-            url: 'http://' + sports.phpServiceInterface + '/index.php/Home/Manage/editUser',
+            url: 'http://' + sports.phpServiceInterface + '/index.php/Home/Manage/editPlace',
             data: 'json_data=' + jsonData,
             type: 'post',
             cache: false,
@@ -152,20 +144,19 @@ var UserList = function() {
         var data = {
             operType : '1'
         };        
-        $('.modal-title').text('Add User');
+        $('.modal-title').text('Add Place');
         var html = template('myForm', data);
         $('.modal-body').addClass('form').empty().html(html);
         initFormValidate();
-        $('.submit').text('Add user').unbind().bind('click', function() {
+        $('.submit').text('Add place').unbind().bind('click', function() {
             if ($('.myForm').validate().form()) {
                 var jsonData = JSON.stringify({
-                    operType    : '1',
-                    userName    : $('input[name="userName"]').val().trim(),
-                    account     : $('input[name="account"]').val().trim(),
-                    password    : $('input[name="password"]').val().trim(),
-                    state       : $('input[name="state"]:checked').val(),
-                    userType    : $('input[name="userType"]:checked').val(),                    
-                    discount    : $('input[name="discount"]').val().trim()
+                    operType        : '1',
+                    title           : $('input[name="title"]').val().trim(),
+                    describe        : $('textarea').val().trim(),
+                    state           : $('input[name="state"]:checked').val(),
+                    address         : $('input[name="address"]').val().trim(),
+                    defaultPrice    : $('input[name="defaultPrice"]').val().trim()
                 });
                 submitUserData(jsonData);
             }
@@ -174,7 +165,7 @@ var UserList = function() {
     window.edit = function(obj){
         var data = $(obj).parent().parent().data('datastr');
         data.operType = '2';
-        $('.modal-title').text('Edit User');
+        $('.modal-title').text('Edit Place');
         var html = template('myForm', data);
         $('.modal-body').addClass('form').empty().html(html);
         initFormValidate();
@@ -182,12 +173,12 @@ var UserList = function() {
             if ($('.myForm').validate().form()) {
                 var jsonData = JSON.stringify({
                     operType    : '2',
-                    userName    : $('input[name="userName"]').val().trim(),
-                    account     : $('input[name="account"]').val().trim(),
-                    password    : $('input[name="password"]').val().trim(),
-                    state       : $('input[name="state"]:checked').val(),
-                    userType    : $('input[name="userType"]:checked').val(),                    
-                    discount    : $('input[name="discount"]').val().trim()
+                    placeId         : $('input[name="placeId"]').val().trim(),
+                    title           : $('input[name="title"]').val().trim(),
+                    describe        : $('textarea').val().trim(),
+                    state           : $('input[name="state"]:checked').val(),
+                    address         : $('input[name="address"]').val().trim(),
+                    defaultPrice    : $('input[name="defaultPrice"]').val().trim()
                 });
                 submitUserData(jsonData);
             }
@@ -196,13 +187,13 @@ var UserList = function() {
 
     window.del = function(obj){
         var data = $(obj).parent().parent().data('datastr');
-        $('.modal-title').text('Delete User');
+        $('.modal-title').text('Delete Place');
         var html = template('delTip', data);
         $('.modal-body').removeClass('form').empty().html(html);
         $('.submit').text('Confirm').unbind().bind('click', function() {
             $.ajax({
-                url: 'http://' + sports.phpServiceInterface + '/index.php/Home/Manage/deleteUser',
-                data: 'json_data=' + JSON.stringify({ userId:data.userId }),
+                url: 'http://' + sports.phpServiceInterface + '/index.php/Home/Manage/deleteCourse',
+                data: 'json_data=' + JSON.stringify({ courseId:data.courseId }),
                 type: 'post',
                 cache: false,
                 dataType: 'json',
@@ -224,12 +215,6 @@ var UserList = function() {
             });
         });
     };
-    window.showPassword = function(obj){
-        $(obj).parent().parent().find('input').attr('type', 'text');
-    };
-    window.hidePassword = function(obj){
-        $(obj).parent().parent().find('input').attr('type', 'password');
-    };
     window.reloadData = function(){
         getDataAjax('reload');
     };
@@ -237,6 +222,5 @@ var UserList = function() {
         init: function() {
             getDataAjax('init');
         }
-
     };
 }();

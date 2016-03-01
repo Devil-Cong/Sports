@@ -41,6 +41,7 @@ class ManageInterfaceController extends Controller {
 	public function queryAllUser() {
 		$user             = M('User');
 		$map['user_type'] = array('NEQ', '0');
+		$map['state']     = array('NEQ', '3');
 		$result           = $user->where($map)->select();
 		if ($result === false) {
 			$ret['retcode'] = '-1';
@@ -59,6 +60,67 @@ class ManageInterfaceController extends Controller {
 				$temp['discount']         = $value['discount'] / 10;
 				$temp['consumptionCount'] = $value['consumption_count'] / 100;
 				$temp['sumCount']         = $value['sum_count'] / 100;
+				array_push($list, $temp);
+			}
+			$ret['retcode'] = '1';
+			$ret['retmsg']  = 'success.';
+			$ret['retdata'] = $list;
+		}
+		echo json_encode($ret, JSON_UNESCAPED_UNICODE);
+	}
+
+	// 查询所有用户
+	public function queryAllCourse() {
+		$course       = M('Course');
+		$map['state'] = array('NEQ', '3');
+		$result       = $course->where($map)->select();
+		if ($result === false) {
+			$ret['retcode'] = '-1';
+			$ret['retmsg']  = 'Program error.';
+		} else {
+			$list = [];
+			foreach ($result as $key => $value) {
+				$temp                   = null;
+				$temp['courseId']       = $value['course_id'];
+				$temp['courseType']     = $value['course_type'];
+				$temp['title']          = $value['title'];
+				$temp['describe']       = $value['describe'];
+				$temp['state']          = $value['state'];
+				$temp['peopleCapacity'] = $value['people_capacity'];
+				$temp['coach']          = $value['coach'];
+				$temp['times']          = $value['times'];
+				$temp['classroom']      = $value['classroom'];
+				$temp['existPeople']    = $value['exist_people'];
+				$temp['price']          = $value['price'] / 100;
+				$temp['createTime']     = $value['create_time'];
+				array_push($list, $temp);
+			}
+			$ret['retcode'] = '1';
+			$ret['retmsg']  = 'success.';
+			$ret['retdata'] = $list;
+		}
+		echo json_encode($ret, JSON_UNESCAPED_UNICODE);
+	}
+
+	// 查询所有场地
+	public function queryAllPlace() {
+		$place        = M('Place');
+		$map['state'] = array('NEQ', '3');
+		$result       = $place->where($map)->select();
+		if ($result === false) {
+			$ret['retcode'] = '-1';
+			$ret['retmsg']  = 'Program error.';
+		} else {
+			$list = [];
+			foreach ($result as $key => $value) {
+				$temp                 = null;
+				$temp['placeId']      = $value['place_id'];
+				$temp['title']        = $value['title'];
+				$temp['describe']     = $value['describe'];
+				$temp['state']        = $value['state'];
+				$temp['address']      = $value['address'];
+				$temp['defaultPrice'] = $value['default_price'] / 100;
+				$temp['createTime']   = $value['create_time'];
 				array_push($list, $temp);
 			}
 			$ret['retcode'] = '1';
