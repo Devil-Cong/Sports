@@ -200,8 +200,15 @@ class ManageController extends BaseController {
 			$data['create_time']   = date('Y-m-d H:i:s');
 			$result                = $place->add($data);
 			if ($result) {
-				$ret['retcode'] = '1';
-				$ret['retmsg']  = 'Add place success.';
+				// 初始化场地日历
+				$result = $this->__addPlaceCalendar($result);
+				if ($result) {
+					$ret['retcode'] = '1';
+					$ret['retmsg']  = 'Add place and init calendar success.';
+				} else {
+					$ret['retcode'] = '-1';
+					$ret['retmsg']  = 'Add place and init calendar fail.';
+				}
 			} else {
 				$ret['retcode'] = '-99';
 				$ret['retmsg']  = 'Add place fail.';
@@ -233,5 +240,66 @@ class ManageController extends BaseController {
 			}
 		}
 		echo json_encode($ret, JSON_UNESCAPED_UNICODE);
+	}
+
+	// 删除课程
+	public function deletePlace() {
+		$jsonData         = json_decode($_POST['json_data'], true);
+		$place           = M('Place');
+		$map['place_id'] = $jsonData['placeId'];
+		$result           = $place->where($map)->find();
+		$result['state']  = '3';
+		$result           = $place->save($result);
+		if ($result !== false) {
+			$ret['retcode'] = '1';
+			$ret['retmsg']  = 'Delete place success.';
+		} else {
+			$ret['retcode'] = '-99';
+			$ret['retmsg']  = 'Delete place fail.';
+		}
+		echo json_encode($ret, JSON_UNESCAPED_UNICODE);
+	}
+
+	// 新增场地日历
+	public function addPlaceCalendar() {
+		$jsonData = json_decode($_POST['json_data'], true);
+		$result   = $this->__addPlaceCalendar($jsonData['placeId']);
+		if ($result) {
+			$ret['retcode'] = '1';
+			$ret['retmsg']  = 'Add calendar success.';
+		} else {
+			$ret['retcode'] = '-1';
+			$ret['retmsg']  = 'Add calendar fail.';
+		}
+		echo json_encode($ret, JSON_UNESCAPED_UNICODE);
+	}
+
+	// 私用新增场地日历
+	private function __addPlaceCalendar($placeId) {
+		$map['place_id'] = $placeId;
+		$price           = M('Place')->where($map)->getField('default_price');
+		$placeCalendar   = M('PlaceCalendar');
+		$result          = $placeCalendar->where($map)->max('date');
+		if (!$result) {
+			// 查不到日期，从当前时间开始初始化
+			$mouth = date('Y-m');
+		} else {
+			// 查到日期，接着日期后面初始化
+			$mouth = date('Y-m', strtotime('+1 day', strtotime($result)));
+		}
+		$number   = API::daysInMonth($mouth);
+		$today    = $mouth . '-01';
+		$dataList = [];
+		for ($i = 0; $i < $number; $i++) {
+			$temp             = null;
+			$temp['place_id'] = $placeId;
+			$temp['month']    = $mouth;
+			$temp['date']     = date('Y-m-d', strtotime('+' . $i . ' day', strtotime($today)));
+			$temp['price']    = $price;
+			$temp['state']    = '1';
+			array_push($dataList, $temp);
+		}
+		$result = $placeCalendar->addAll($dataList);
+		return $result;
 	}
 }

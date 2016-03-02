@@ -129,4 +129,53 @@ class ManageInterfaceController extends Controller {
 		}
 		echo json_encode($ret, JSON_UNESCAPED_UNICODE);
 	}
+
+	public function queryPlaceCalendar() {
+		// $jsonData = json_decode($_POST['json_data'], true);
+		$jsonData['mouth']   = '2016-04';
+		$jsonData['placeId'] = '1';
+
+		$day = $jsonData['mouth'] . '-01';
+
+		// 判断月份第一天是星期几，0 代表周日
+		// 时间往前移，到该天是周日
+		$diff     = date('w', strtotime($day));
+		$startDay = date('Y-m-d', strtotime('-' . $diff . ' day', strtotime($day)));
+		// 时间前移之后共有几天
+		$number = API::daysInMonth($jsonData['mouth']) + $diff;
+		// 时间往后移，到该天是周六
+		$number = $number + (7 - ($number % 7));
+		$endDay = date('Y-m-d', strtotime('+' . $number . ' day', strtotime($startDay)));
+
+		$placeCalendar   = M('PlaceCalendar');
+		//这里做日期检查
+
+
+		$map = null;
+		$map['place_id'] = $jsonData['placeId'];
+		$map['date']     = array('BETWEEN', array($startDay, $endDay));
+		$result          = $placeCalendar->where($map)->select();
+		if ($result === false) {
+			$ret['retcode'] = '-1';
+			$ret['retmsg']  = 'Program error.';
+		} else {
+			$list = [];
+			foreach ($result as $key => $value) {
+				$temp                 = null;
+				$temp['placeId']      = $value['place_id'];
+				$temp['title']        = $value['title'];
+				$temp['describe']     = $value['describe'];
+				$temp['state']        = $value['state'];
+				$temp['address']      = $value['address'];
+				$temp['defaultPrice'] = $value['default_price'] / 100;
+				$temp['createTime']   = $value['create_time'];
+				array_push($list, $temp);
+			}
+			$ret['retcode'] = '1';
+			$ret['retmsg']  = 'success.';
+			$ret['retdata'] = $list;
+		}
+		// echo $endDay;
+		echo json_encode($result, JSON_UNESCAPED_UNICODE);
+	}
 }

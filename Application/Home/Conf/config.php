@@ -9,7 +9,7 @@ return array(
 		'__AUI_ART_TEMPLATE__' => __ROOT__ . '/Public/aui-artTemplate',
 	),
 
-	'SHOW_PAGE_TRACE' => true, //显示调试面板
+	'SHOW_PAGE_TRACE' => true, // 显示调试面板
 	/*数据库配置*/
 	'DB_TYPE'         => 'mysql', // 数据库类型
 	'DB_HOST'         => '192.168.1.111', // 服务器地址

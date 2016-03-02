@@ -167,7 +167,7 @@
                 {{value.createTime}}
             </td>
             <td>
-                <a href="#portlet-config" data-toggle="modal" class="badge badge-success badge-roundless">Calendar</a>
+                <a href="#portlet-config" data-toggle="modal" class="badge badge-success badge-roundless" onclick="addCal(this)">Add Calendar</a>
                 <a href="#portlet-config" data-toggle="modal" class="badge badge-warning badge-roundless" onclick="edit(this)">Edit</a>
                 <a href="#portlet-config" data-toggle="modal" class="badge badge-danger badge-roundless" onclick="del(this)">Delete</a>
             </td>
@@ -221,6 +221,9 @@
     </script>
     <script id="delTip" type="text/html">
         Confirm delete <span class="label label-danger">{{title}}</span> ?
+    </script>
+    <script id="addCalTip" type="text/html">
+        Confirm add calendar a mouth for <span class="label label-danger">{{title}}</span> ?
     </script>
     <!-- END JAVASCRIPTS TEMPLATE -->
     <!-- BEGIN JAVASCRIPTS(Load javascripts at bottom, this will reduce page load time) -->

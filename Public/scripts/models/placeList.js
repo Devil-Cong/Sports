@@ -140,6 +140,7 @@ var PlaceList = function() {
             error: function() {}
         });
     };
+
     window.add = function(){
         var data = {
             operType : '1'
@@ -162,6 +163,7 @@ var PlaceList = function() {
             }
         });
     };
+
     window.edit = function(obj){
         var data = $(obj).parent().parent().data('datastr');
         data.operType = '2';
@@ -192,8 +194,8 @@ var PlaceList = function() {
         $('.modal-body').removeClass('form').empty().html(html);
         $('.submit').text('Confirm').unbind().bind('click', function() {
             $.ajax({
-                url: 'http://' + sports.phpServiceInterface + '/index.php/Home/Manage/deleteCourse',
-                data: 'json_data=' + JSON.stringify({ courseId:data.courseId }),
+                url: 'http://' + sports.phpServiceInterface + '/index.php/Home/Manage/deletePlace',
+                data: 'json_data=' + JSON.stringify({ placeId:data.placeId }),
                 type: 'post',
                 cache: false,
                 dataType: 'json',
@@ -215,6 +217,37 @@ var PlaceList = function() {
             });
         });
     };
+
+    window.addCal = function(obj){
+        var data = $(obj).parent().parent().data('datastr');
+        $('.modal-title').text('Add Calendar');
+        var html = template('addCalTip', data);
+        $('.modal-body').removeClass('form').empty().html(html);
+        $('.submit').text('Confirm').unbind().bind('click', function() {
+            $.ajax({
+                url: 'http://' + sports.phpServiceInterface + '/index.php/Home/Manage/addPlaceCalendar',
+                data: 'json_data=' + JSON.stringify({ placeId:data.placeId }),
+                type: 'post',
+                cache: false,
+                dataType: 'json',
+                success: function(data) {
+                    if (data.retcode) {
+                        switch (data.retcode) {
+                            case '1':
+                                $('.closeBtn').click();
+                                toastr.success(data.retmsg, "Notifications");
+                                break;
+                            default:
+                                toastr.error(data.retmsg, "Notifications");
+                                break;
+                        }
+                    }
+                },
+                error: function() {}
+            });
+        });
+    };
+
     window.reloadData = function(){
         getDataAjax('reload');
     };
