@@ -42,7 +42,7 @@
                                     <h4 class="modal-title">Modal title</h4>
                                 </div>
                                 <div class="modal-body">
-                                modal-body
+                                    modal-body
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn blue submit">Save changes</button>
@@ -56,7 +56,7 @@
                     <!-- /.modal -->
                     <!-- END SAMPLE PORTLET CONFIGURATION MODAL FORM-->
                     <!-- BEGIN PAGE HEADER-->
-                    <h3 class="page-title">Course Manage</h3>
+                    <h3 class="page-title">Place Calendar Manage</h3>
                     <div class="page-bar">
                         <ul class="page-breadcrumb">
                             <li>
@@ -65,12 +65,22 @@
                                 <i class="fa fa-angle-right"></i>
                             </li>
                             <li>
-                                <span>Course Manage</span>
+                                <span>Place Calendar Manage</span>
                             </li>
                         </ul>
                         <div class="page-toolbar">
                             <div class="btn-group pull-right">
-                                <a href="#portlet-config" data-toggle="modal" class="btn btn-fit-height green-haze" onclick="add()"> Add <i class="fa fa-plus"></i> </a>
+                                <button type="button" class="btn btn-fit-height green-haze dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" data-delay="1000" data-close-others="true">
+                                Actions <i class="fa fa-angle-down"></i>
+                                </button>
+                                <ul class="dropdown-menu pull-right" role="menu">
+                                    <li>
+                                        <a href="#portlet-config" data-toggle="modal" onclick="picker()"><i class="fa fa-calendar"></i>  Select Month </a>
+                                    </li>
+                                    <li>
+                                        <a href="#portlet-config" data-toggle="modal"><i class="fa  fa-check-square-o"></i>  Batch Modify </a>
+                                    </li>
+                                </ul>
                             </div>
                         </div>
                     </div>
@@ -82,7 +92,7 @@
                             <div class="portlet box red-intense">
                                 <div class="portlet-title">
                                     <div class="caption">
-                                        <i class="fa fa-globe"></i>Course List
+                                        <i class="fa fa-globe"></i>Place Calendar
                                     </div>
                                     <div class="tools">
                                         <a href="javascript:;" class="collapse">
@@ -92,47 +102,29 @@
                                     </div>
                                 </div>
                                 <div class="portlet-body">
-                                    <table class="table table-striped table-bordered table-hover" id="myTable">
+                                    <table class="table table-bordered" id="myTable">
                                         <thead>
                                             <tr>
                                                 <th>
-                                                    ID
+                                                    <center>Sunday</center>
                                                 </th>
                                                 <th>
-                                                    Title
+                                                    <center>Saturday</center>
+                                                </th>            
+                                                <th>
+                                                    <center>Friday</center>
                                                 </th>          
-                                                <th class="hidden-xs">
-                                                    Describe
+                                                <th>
+                                                    <center>Thursday</center>
+                                                </th>
+                                                <th>                
+                                                    <center>Wednesday</center>
                                                 </th>
                                                 <th>
-                                                    Course Type
-                                                </th>            
-                                                <th class="hidden-xs">
-                                                    Coach
-                                                </th>                                                
-                                                <th class="hidden-xs">
-                                                    Times
+                                                    <center>Tuesday</center>
                                                 </th>
-                                                <th class="hidden-xs">
-                                                    Classroom
-                                                </th>                                                
-                                                <th class="hidden-xs">
-                                                    State
-                                                </th>
-                                                <th class="hidden-xs">
-                                                    Stock
-                                                </th>
-                                                <th class="hidden-xs">
-                                                    Sold
-                                                </th>
-                                                <th class="hidden-xs">
-                                                    Price
-                                                </th>  
-                                                <th class="hidden-xs">
-                                                    Create Time  
-                                                </th>            
-                                                <th class="hidden-xs">
-                                                    Operation
+                                                <th>
+                                                    <center>Monday</center>
                                                 </th>
                                             </tr>
                                         </thead>
@@ -158,102 +150,81 @@
     <!-- BEGIN JAVASCRIPTS TEMPLATE -->
     <script id="tableBody" type="text/html">
         {{each retdata as value i}}
-        <tr data-datastr="{{value.dataStr}}">
+        <tr>
             <td>
-                {{value.courseId}}
+                <center>123</center>
             </td>
             <td>
-                {{value.title}}
+                <center>123</center>
             </td>
             <td>
-                {{value.describe}}
+                <center>123</center>
             </td>
             <td>
-                {{if value.courseType == 1 }}<span class="label label-success">Shaping</span>{{/if}}
-                {{if value.courseType == 2 }}<span class="label label-danger">Slimming</span>{{/if}}
-                {{if value.courseType == 3 }}<span class="label label-warning">Others</span>{{/if}}
+                <center>123</center>
             </td>
             <td>
-                {{value.coach}}
+                <center>{{if value.userType == 1 }}<span class="label label-warning">Admin</span>{{/if}}</center>
             </td>
             <td>
-                {{value.times}} 次
-            </td>
-            <td>
-                {{value.classroom}}
-            </td>
-            <td>
-                {{if value.state == 1 }}<span class="label label-success">Enable</span>{{/if}}
                 {{if value.state == 2 }}<span class="label label-danger">Disable</span>{{/if}}
             </td>
             <td>
-                {{value.peopleCapacity}}
-            </td>
-            <td>
-                {{value.existPeople}}
-            </td>
-            <td>
-                {{value.price}}
-            </td>
-            <td>
-                {{value.createTime}}
-            </td>
-            <td>
-                <a href="#portlet-config" data-toggle="modal" class="badge badge-warning badge-roundless" onclick="edit(this)">Edit</a>
-                <a href="#portlet-config" data-toggle="modal" class="badge badge-danger badge-roundless" onclick="del(this)">Delete</a>
+                {{value.discount}} 折
             </td>
         </tr>
         {{/each}}
     </script>
+    <script id="myPicker" type="text/html">
+        <form class="form-horizontal">
+            <div class="form-group">
+                <label class="control-label col-md-4">Select Months Only</label>
+                <div class="col-md-8">
+                    <div class="input-group input-medium date date-picker" data-date="10/2012" data-date-format="mm/yyyy" data-date-viewmode="years" data-date-minviewmode="months">
+                        <input type="text" class="form-control" readonly>
+                        <span class="input-group-btn">
+                        <button class="btn default" type="button"><i class="fa fa-calendar"></i></button>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </script>
+    <script id="myRangePicker" type="text/html">
+        <form class="form-horizontal">
+            <div class="form-group">
+                <label class="control-label col-md-4">Default Date Ranges</label>
+                <div class="col-md-8">
+                    <div class="input-group input-large" id="rangePicker">
+                        <input type="text" class="form-control" readonly>
+                        <span class="input-group-btn">
+                        <button class="btn default date-range-toggle" type="button"><i class="fa fa-calendar"></i></button>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </script>
     <script id="myForm" type="text/html">
         <form class="myForm form-horizontal form-bordered form-row-stripped">
             <div class="form-body">
-                <input type="hidden" class="form-control" name="courseId" value="{{courseId}}"/>
+                <input type="hidden" class="form-control" name="userId" value="{{userId}}"/>
                 <div class="form-group">
-                    <label class="control-label col-md-3">Title</label>
+                    <label class="control-label col-md-3">User Name</label>
                     <div class="col-md-9">
-                        <input type="text" placeholder="Title" class="form-control" name="title" value="{{title}}"/>
+                        <input type="text" placeholder="User Name" class="form-control" name="userName" value="{{userName}}"/>
                     </div>
                 </div>
                 <div class="form-group">
-                    <label class="control-label col-md-3">Describe</label>
+                    <label class="control-label col-md-3">Account</label>
                     <div class="col-md-9">
-                        <textarea class="form-control" name="describe" rows="3">{{describe}}</textarea>
+                        <input type="text" placeholder="Account" class="form-control" name="account" value="{{account}}" {{if operType == '2' }}readonly{{/if}}/>
                     </div>
-                </div>       
+                </div>                
                 <div class="form-group">
-                    <label class="control-label col-md-3">Course Type</label>
+                    <label class="control-label col-md-3">Password</label>
                     <div class="col-md-9">
-                        <div class="radio-list" data-error-container="#courseType_error">
-                            <label>
-                            <input type="radio" name="courseType" value="1" {{if courseType == '1' }}checked{{/if}}/>
-                            Shaping </label>
-                            <label>
-                            <input type="radio" name="courseType" value="2" {{if courseType == '2' }}checked{{/if}}/>
-                            Slimming </label>
-                            <label>
-                            <input type="radio" name="courseType" value="3" {{if courseType == '3' }}checked{{/if}}/>
-                            Others </label>
-                        </div>
-                        <div id="courseType_error"></div>
-                    </div>
-                </div>         
-                <div class="form-group">
-                    <label class="control-label col-md-3">Coach</label>
-                    <div class="col-md-9">
-                        <input type="text" placeholder="Coach" class="form-control" name="coach" value="{{coach}}"/>
-                    </div>
-                </div>                         
-                <div class="form-group">
-                    <label class="control-label col-md-3">Times</label>
-                    <div class="col-md-9">
-                        <input type="text" placeholder="Times" class="form-control" name="times" value="{{times}}"/>
-                    </div>
-                </div>                         
-                <div class="form-group">
-                    <label class="control-label col-md-3">Classroom</label>
-                    <div class="col-md-9">
-                        <input type="text" placeholder="Classroom" class="form-control" name="classroom" value="{{classroom}}"/>
+                        <input type="password" placeholder="Password" class="form-control" name="password" value="{{password}}"/>
                     </div>
                 </div>
                 <div class="form-group">
@@ -271,22 +242,30 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <label class="control-label col-md-3">Stock</label>
+                    <label class="control-label col-md-3">User Type</label>
                     <div class="col-md-9">
-                        <input type="text" placeholder="Stock" class="form-control" name="peopleCapacity" value="{{peopleCapacity}}"/>
+                        <div class="radio-list" data-error-container="#userType_error">
+                            <label>
+                            <input type="radio" name="userType" value="1" {{if userType == '1' }}checked{{/if}}/>
+                            Admin </label>
+                            <label>
+                            <input type="radio" name="userType" value="2" {{if userType == '2' }}checked{{/if}}/>
+                            Member </label>
+                        </div>
+                        <div id="userType_error"></div>
                     </div>
                 </div>
                 <div class="form-group">
-                    <label class="control-label col-md-3">Price</label>
+                    <label class="control-label col-md-3">Discount</label>
                     <div class="col-md-9">
-                        <input type="text" placeholder="Price" class="form-control" name="price" value="{{price}}">
+                        <input type="text" placeholder="Discount" class="form-control" name="discount" value="{{discount}}">
                     </div>
                 </div>
             </div>
         </form>
     </script>
     <script id="delTip" type="text/html">
-        Confirm delete <span class="label label-danger">{{title}}</span> ?
+        Confirm delete <span class="label label-danger">{{userName}}</span> - <span class="label label-danger">{{account}}</span> ?
     </script>
     <!-- END JAVASCRIPTS TEMPLATE -->
     <!-- BEGIN JAVASCRIPTS(Load javascripts at bottom, this will reduce page load time) -->
@@ -300,12 +279,11 @@
     <script type="text/javascript" src="__ASSETS__/global/plugins/bootstrap-hover-dropdown/bootstrap-hover-dropdown.min.js"></script>
     <!-- END CORE PLUGINS -->
     <!-- BEGIN PAGE LEVEL PLUGINS -->
-    <script type="text/javascript" src="__ASSETS__/global/plugins/select2/select2.min.js"></script>
-    <script type="text/javascript" src="__ASSETS__/global/plugins/datatables/media/js/jquery.dataTables.min.js"></script>
-    <script type="text/javascript" src="__ASSETS__/global/plugins/datatables/extensions/ColReorder/js/dataTables.colReorder.min.js"></script>
-    <script type="text/javascript" src="__ASSETS__/global/plugins/datatables/plugins/bootstrap/dataTables.bootstrap.js"></script>
-    <script type="text/javascript" src="__ASSETS__/global/plugins/bootstrap-toastr/toastr.min.js"></script>    
     <script type="text/javascript" src="__ASSETS__/global/plugins/jquery-validation/js/jquery.validate.min.js"></script>
+    <script type="text/javascript" src="__ASSETS__/global/plugins/bootstrap-daterangepicker/moment.min.js"></script>
+    <script type="text/javascript" src="__ASSETS__/global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js"></script>
+    <script type="text/javascript" src="__ASSETS__/global/plugins/bootstrap-daterangepicker/daterangepicker.js"></script>
+    <script type="text/javascript" src="__ASSETS__/global/plugins/bootstrap-toastr/toastr.min.js"></script>    
     <!-- END PAGE LEVEL PLUGINS -->
     <!-- BEGIN PAGE LEVEL SCRIPTS -->
     <script type="text/javascript" src="__ASSETS__/global/scripts/metronic.js"></script>
@@ -314,13 +292,13 @@
     <!-- BEGIN DEVELOP SCRIPTS -->
     <script type="text/javascript" src="__PUBLIC__/scripts/lib/config.js"></script>
     <script type="text/javascript" src="__PUBLIC__/scripts/lib/template.js"></script>
-    <script type="text/javascript" src="__PUBLIC__/scripts/models/courseList.js"></script>
+    <script type="text/javascript" src="__PUBLIC__/scripts/models/placeCalendar.js"></script>
     <!-- END DEVELOP SCRIPTS -->
     <script>
     jQuery(document).ready(function() {
         Metronic.init(); // init metronic core componets
         Layout.init(); // init layout
-        CourseList.init();
+        PlaceCalendar.init();
     });
     </script>
     <!-- END JAVASCRIPTS -->

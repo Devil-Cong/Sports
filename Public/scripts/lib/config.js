@@ -32,21 +32,23 @@ var sports = {
 };
 
 // 配置提示框属性
-toastr.options = {
-	"closeButton"		: true,
-	"debug"				: false,
-	"positionClass"		: "toast-bottom-right",
-	"onclick"			: null,
-	"showDuration"		: 500,
-	"hideDuration"		: 500,
-	"timeOut"			: 2000,
-	"extendedTimeOut"	: 500,
-	"showEasing" 		: "swing",
-	"hideEasing" 		: "linear",
-	"showMethod" 		: "fadeIn",
-	"hideMethod" 		: "fadeOut"
-};
-// 类型: success/info/warning/error
+if(toastr){
+    toastr.options = {
+    	"closeButton"		: true,
+    	"debug"				: false,
+    	"positionClass"		: "toast-bottom-right",
+    	"onclick"			: null,
+    	"showDuration"		: 500,
+    	"hideDuration"		: 500,
+    	"timeOut"			: 2000,
+    	"extendedTimeOut"	: 500,
+    	"showEasing" 		: "swing",
+    	"hideEasing" 		: "linear",
+    	"showMethod" 		: "fadeIn",
+    	"hideMethod" 		: "fadeOut"
+    };
+    // 类型: success/info/warning/error
+}
 
 jQuery.validator.addMethod("isMobile", function(value, element) {    
     var length = value.length;    
