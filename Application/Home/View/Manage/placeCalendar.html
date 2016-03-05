@@ -97,34 +97,33 @@
                                     <div class="tools">
                                         <a href="javascript:;" class="collapse">
                                         </a>
-                                        <a href="javascript:;" class="reload" onclick="reloadData()">
-                                        </a>
                                     </div>
                                 </div>
                                 <div class="portlet-body">
+                                    <h3 class="year-month"><center>March 2016<center></h3>
                                     <table class="table table-bordered" id="myTable">
                                         <thead>
                                             <tr>
-                                                <th>
+                                                <th class="cal-th">
                                                     <center>Sunday</center>
                                                 </th>
-                                                <th>
-                                                    <center>Saturday</center>
+                                                <th class="cal-th">
+                                                    <center>Monday</center>
                                                 </th>            
-                                                <th>
+                                                <th class="cal-th">
                                                     <center>Friday</center>
                                                 </th>          
-                                                <th>
+                                                <th class="cal-th">
                                                     <center>Thursday</center>
                                                 </th>
-                                                <th>                
+                                                <th class="cal-th">                
                                                     <center>Wednesday</center>
                                                 </th>
-                                                <th>
+                                                <th class="cal-th">
                                                     <center>Tuesday</center>
                                                 </th>
-                                                <th>
-                                                    <center>Monday</center>
+                                                <th class="cal-th">
+                                                    <center>Saturday</center>
                                                 </th>
                                             </tr>
                                         </thead>
@@ -149,43 +148,50 @@
     </div>
     <!-- BEGIN JAVASCRIPTS TEMPLATE -->
     <script id="tableBody" type="text/html">
-        {{each retdata as value i}}
+        {{each list as valueList i}}
         <tr>
-            <td>
-                <center>123</center>
-            </td>
-            <td>
-                <center>123</center>
-            </td>
-            <td>
-                <center>123</center>
-            </td>
-            <td>
-                <center>123</center>
-            </td>
-            <td>
-                <center>{{if value.userType == 1 }}<span class="label label-warning">Admin</span>{{/if}}</center>
-            </td>
-            <td>
-                {{if value.state == 2 }}<span class="label label-danger">Disable</span>{{/if}}
-            </td>
-            <td>
-                {{value.discount}} 折
-            </td>
+            {{each valueList as value t}}
+                {{if value != NULL }}
+                    {{if !value.thisMonth}} 
+                        <!-- 不是本月份 -->
+                        <td class="cal-dt not-this-month">
+                            <span class="day">{{value.day}}<span><br/>
+                            <span class="price">￥{{value.price}}</span>
+                        </td>
+                    {{else if value.state != 1}} 
+                        <!-- 不可预定 -->
+                        <td class="cal-dt cal-dt-lock">
+                            <span class="day">{{value.day}}<span><br/>
+                            <span class="price">￥{{value.price}}</span>
+                        </td>
+                    {{else}}
+                        <td class="cal-dt">
+                            <a href="#portlet-config" data-toggle="modal" class="price-btn">
+                                <span class="day">{{value.day}}<span><br/>
+                                <span class="price">￥{{value.price}}</span>
+                            </a>
+                        </td>
+                    {{/if}}
+                {{else}}
+                    <td class="cal-dt not-this-month">
+                    </td>
+                {{/if}}
+            {{/each}}
         </tr>
         {{/each}}
     </script>
     <script id="myPicker" type="text/html">
-        <form class="form-horizontal">
+        <form class="myPicker form-horizontal">
             <div class="form-group">
                 <label class="control-label col-md-4">Select Months Only</label>
                 <div class="col-md-8">
-                    <div class="input-group input-medium date date-picker" data-date="10/2012" data-date-format="mm/yyyy" data-date-viewmode="years" data-date-minviewmode="months">
-                        <input type="text" class="form-control" readonly>
+                    <div class="input-group input-medium date date-picker" data-error-container="#mounth_error">
+                        <input type="text" class="form-control" name="month" readonly>
                         <span class="input-group-btn">
                         <button class="btn default" type="button"><i class="fa fa-calendar"></i></button>
                         </span>
                     </div>
+                    <div id="mounth_error"></div>
                 </div>
             </div>
         </form>
@@ -198,67 +204,8 @@
                     <div class="input-group input-large" id="rangePicker">
                         <input type="text" class="form-control" readonly>
                         <span class="input-group-btn">
-                        <button class="btn default date-range-toggle" type="button"><i class="fa fa-calendar"></i></button>
+                            <button class="btn default date-range-toggle" type="button"><i class="fa fa-calendar"></i></button>
                         </span>
-                    </div>
-                </div>
-            </div>
-        </form>
-    </script>
-    <script id="myForm" type="text/html">
-        <form class="myForm form-horizontal form-bordered form-row-stripped">
-            <div class="form-body">
-                <input type="hidden" class="form-control" name="userId" value="{{userId}}"/>
-                <div class="form-group">
-                    <label class="control-label col-md-3">User Name</label>
-                    <div class="col-md-9">
-                        <input type="text" placeholder="User Name" class="form-control" name="userName" value="{{userName}}"/>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label class="control-label col-md-3">Account</label>
-                    <div class="col-md-9">
-                        <input type="text" placeholder="Account" class="form-control" name="account" value="{{account}}" {{if operType == '2' }}readonly{{/if}}/>
-                    </div>
-                </div>                
-                <div class="form-group">
-                    <label class="control-label col-md-3">Password</label>
-                    <div class="col-md-9">
-                        <input type="password" placeholder="Password" class="form-control" name="password" value="{{password}}"/>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label class="control-label col-md-3">State</label>
-                    <div class="col-md-9">
-                        <div class="radio-list" data-error-container="#state_error">
-                            <label>
-                            <input type="radio" name="state" value="1" {{if state == '1' }}checked{{/if}}/>
-                            Enable </label>
-                            <label>
-                            <input type="radio" name="state" value="2" {{if state == '2' }}checked{{/if}}/>
-                            Disable </label>
-                        </div>                        
-                        <div id="state_error"></div>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label class="control-label col-md-3">User Type</label>
-                    <div class="col-md-9">
-                        <div class="radio-list" data-error-container="#userType_error">
-                            <label>
-                            <input type="radio" name="userType" value="1" {{if userType == '1' }}checked{{/if}}/>
-                            Admin </label>
-                            <label>
-                            <input type="radio" name="userType" value="2" {{if userType == '2' }}checked{{/if}}/>
-                            Member </label>
-                        </div>
-                        <div id="userType_error"></div>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label class="control-label col-md-3">Discount</label>
-                    <div class="col-md-9">
-                        <input type="text" placeholder="Discount" class="form-control" name="discount" value="{{discount}}">
                     </div>
                 </div>
             </div>

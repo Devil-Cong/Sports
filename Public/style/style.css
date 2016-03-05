@@ -3,3 +3,63 @@
     font-size: 9px;
     vertical-align: middle;
 }
+
+.table .cal-th {
+    width: 14%;
+}
+
+.table .cal-dt {
+    text-align: center;
+}
+
+.table .cal-dt:hover {
+    background: #44B6AE;
+}
+
+.table .cal-dt:hover .price-btn {
+    color: #FFFFFF;
+}
+.table .cal-dt:hover .price {
+    color: #FFFFFF;
+}
+
+.table .cal-dt .price-btn {
+    display: inline-block;
+    width: 100%;
+    color: #333333;
+    text-decoration: none;
+}
+
+.table .cal-dt-lock {
+    background: #F2F2F2;
+}
+
+.table .cal-dt-lock:hover {
+    background: #F2F2F2;
+}
+.table .cal-dt-lock:hover .price{
+    color: #BBBBBB;
+}
+
+.table .not-this-month {
+    color: #BBBBBB;
+}
+
+.table .not-this-month:hover {
+    background: #FFFFFF;
+}
+.table .not-this-month:hover .price{
+    color: #BBBBBB;
+}
+
+.table .cal-dt .day {
+    font-size: 16px;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+}
+
+.table .cal-dt .price {
+    font-size: 14px;
+    color: #BBBBBB;
+}

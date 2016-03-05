@@ -26,12 +26,6 @@ class ManageController extends BaseController {
 	}
 
 	public function placeCalendar() {
-		$placeId         = $_GET['placeId'];
-		$placeCalendar   = M('PlaceCalendar');
-		$map['place_id'] = $placeId;
-		$beginDay        = $placeCalendar->where($map)->max('date');
-		$diff            = API::dateDiff(date('Y-m-d'), $beginDay);
-
 		$this->assign('urlInfo', CONTROLLER_NAME . '/' . ACTION_NAME);
 		$this->display();
 	}
@@ -292,16 +286,13 @@ class ManageController extends BaseController {
 		$placeCalendar   = M('PlaceCalendar');
 		$result          = $placeCalendar->where($map)->max('date');
 		if (!$result) {
-			// 查不到日期，从当前时间开始初始化，两个月
-			$mouth  = date('Y-m');
-			$number = API::daysInMonth($mouth);
-			$mouth  = date('Y-m', strtotime('-1 month'));
-			$number += API::daysInMonth($mouth);
+			// 查不到日期，从当前时间开始初始化，一个月
+			$mouth = date('Y-m');
 		} else {
 			// 查到日期，接着日期后面初始化，一个月
-			$mouth  = date('Y-m', strtotime('+1 day', strtotime($result)));
-			$number = API::daysInMonth($mouth);
+			$mouth = date('Y-m', strtotime('+1 day', strtotime($result)));
 		}
+		$number   = API::daysInMonth($mouth);
 		$today    = $mouth . '-01';
 		$dataList = [];
 		for ($i = 0; $i < $number; $i++) {

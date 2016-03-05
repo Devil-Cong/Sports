@@ -131,11 +131,8 @@ class ManageInterfaceController extends Controller {
 	}
 
 	public function queryPlaceCalendar() {
-		// $jsonData = json_decode($_POST['json_data'], true);
-		$jsonData['month']   = '2016-03';
-		$jsonData['placeId'] = '7';
-
-		$day = $jsonData['month'] . '-01';
+		$jsonData = json_decode($_POST['json_data'], true);
+		$day      = $jsonData['month'] . '-01';
 
 		// 判断月份第一天是星期几，0 代表周日
 		// 时间往前移，到该天是周日
@@ -144,9 +141,8 @@ class ManageInterfaceController extends Controller {
 		// 时间前移之后共有几天
 		$number = API::daysInMonth($jsonData['month']) + $diff;
 		// 时间往后移，到该天是周六
-		$number = $number + (7 - ($number % 7));
-		$endDay = date('Y-m-d', strtotime('+' . $number . ' day', strtotime($startDay)));
-
+		$number        = $number + (7 - ($number % 7));
+		$endDay        = date('Y-m-d', strtotime('+' . ($number - 1) . ' day', strtotime($startDay)));
 		$placeCalendar = M('PlaceCalendar');
 
 		//这里做日期检查更新
@@ -170,45 +166,88 @@ class ManageInterfaceController extends Controller {
 				$ret['retmsg']  = 'Query place calendar error.';
 			} else {
 				$list = [];
+				$temp = [null, null, null, null, null, null, null];
 				foreach ($result as $key => $value) {
-					$obj['id']      = $value['id'];
-					$obj['placeId'] = $value['place_id'];
-					$obj['month']   = $value['month'];
-					$obj['date']    = $value['date'];
-					$obj['price']   = $value['price'] / 100;
-					$obj['state']   = $value['state'];
+					$obj['id']        = $value['id'];
+					$obj['placeId']   = $value['place_id'];
+					$obj['date']      = $value['date'];
+					$obj['month']     = $value['month'];
+					$obj['day']       = substr($value['date'], -2);
+					$obj['price']     = $value['price'] / 100;
+					$obj['state']     = $value['state'];
+					$obj['thisMonth'] = $value['month'] == $jsonData['month'] ? true : false;
 
 					switch (date('w', strtotime($value['date']))) {
 					case 0:
-						$temp['sunday'] = $obj;
+						$obj['dayIs'] = 'sunday';
+						$temp[0]      = $obj;
 						break;
 					case 1:
-						$temp['monday'] = $obj;
+						$obj['dayIs'] = 'monday';
+						$temp[1]      = $obj;
 						break;
 					case 2:
-						$temp['tuesday'] = $obj;
+						$obj['dayIs'] = 'tuesday';
+						$temp[2]      = $obj;
 						break;
 					case 3:
-						$temp['wednesday'] = $obj;
+						$obj['dayIs'] = 'wednesday';
+						$temp[3]      = $obj;
 						break;
 					case 4:
-						$temp['thursday'] = $obj;
+						$obj['dayIs'] = 'thursday';
+						$temp[4]      = $obj;
 						break;
 					case 5:
-						$temp['friday'] = $obj;
+						$obj['dayIs'] = 'friday';
+						$temp[5]      = $obj;
 						break;
 					case 6:
-						$temp['saturday'] = $obj;
-						array_push($list, $temp);
-						$temp = null;
+						$obj['dayIs'] = 'saturday';
+						$temp[6]      = $obj;
 						break;
+					}
+					if ($temp[6] != null) {
+						array_push($list, $temp);
+						$temp = [null, null, null, null, null, null, null];
+					} else if (!$result[$key + 1]) {
+						array_push($list, $temp);
+						$temp = [null, null, null, null, null, null, null];
 					}
 				}
 				$ret['retcode'] = '1';
 				$ret['retmsg']  = 'success.';
-				$ret['retdata'] = $list;
+				$ret['retdata'] = array(
+					'list'  => $list,
+					'month' => date('F Y',strtotime($jsonData['month'])),
+				);
 			}
 		}
+		echo json_encode($ret, JSON_UNESCAPED_UNICODE);
+	}
+
+	public function queryPlaceCalendarRange() {
+		$jsonData        = json_decode($_POST['json_data'], true);
+		$placeCalendar   = M('PlaceCalendar');
+		$map['place_id'] = $jsonData['placeId'];
+		$endDay          = $placeCalendar->where($map)->max('date');
+
+		if ($endDay === false) {
+			$ret['retcode'] = '-1';
+			$ret['retmsg']  = 'Query place calendar range error.';
+		} else {
+			$startDay  = date('Y-m-d');
+			$diff      = API::dateDiff($startDay, $endDay);
+			$dateRange = array(
+				'diff'     => $diff,
+				'startDay' => $startDay,
+				'endDay'   => $endDay,
+			);
+			$ret['retcode'] = '1';
+			$ret['retmsg']  = 'success.';
+			$ret['retdata'] = $dateRange;
+		}
+
 		echo json_encode($ret, JSON_UNESCAPED_UNICODE);
 	}
 }

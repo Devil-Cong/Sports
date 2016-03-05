@@ -28,11 +28,20 @@ var sports = {
             	"targets"	: []												// 为一个或多个列编制定义
         	}
         ]
+    },
+    $_GET : function(name){                                                     // 获取url参数
+        var reg = new RegExp('(^|&)' + name + '=([^&]*)(&|$)'),
+            r   = window.location.search.substr(1).match(reg);
+        if(r!=null){
+            return  unescape(r[2]);   
+        }else{
+            return null;
+        } 
     }
 };
 
 // 配置提示框属性
-if(toastr){
+if(typeof toastr != "undefined"){
     toastr.options = {
     	"closeButton"		: true,
     	"debug"				: false,
@@ -54,4 +63,3 @@ jQuery.validator.addMethod("isMobile", function(value, element) {
     var length = value.length;    
     return this.optional(element) || (length == 11 && /^(((13[0-9]{1})|(15[0-9]{1})|(18[0-9]{1}))+\d{8})$/.test(value));    
 }, "Mobile phone number is wrong");
-
