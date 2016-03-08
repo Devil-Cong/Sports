@@ -56,7 +56,7 @@
                     <!-- /.modal -->
                     <!-- END SAMPLE PORTLET CONFIGURATION MODAL FORM-->
                     <!-- BEGIN PAGE HEADER-->
-                    <h3 class="page-title">Place Manage</h3>
+                    <h3 class="page-title">User Manage</h3>
                     <div class="page-bar">
                         <ul class="page-breadcrumb">
                             <li>
@@ -65,7 +65,7 @@
                                 <i class="fa fa-angle-right"></i>
                             </li>
                             <li>
-                                <span>Place Manage</span>
+                                <span>User Manage</span>
                             </li>
                         </ul>
                         <div class="page-toolbar">
@@ -82,7 +82,7 @@
                             <div class="portlet box red-intense">
                                 <div class="portlet-title">
                                     <div class="caption">
-                                        <i class="fa fa-globe"></i>Place List
+                                        <i class="fa fa-globe"></i>User List
                                     </div>
                                     <div class="tools">
                                         <a href="javascript:;" class="collapse">
@@ -99,23 +99,32 @@
                                                     ID
                                                 </th>
                                                 <th>
-                                                    Title
+                                                    User Name
+                                                </th>            
+                                                <th>
+                                                    Account
                                                 </th>          
                                                 <th class="hidden-xs">
-                                                    Describe
-                                                </th>          
-                                                <th class="hidden-xs">
-                                                    Address
-                                                </th>                                                
+                                                    Password
+                                                </th>
+                                                <th class="hidden-xs">                
+                                                    User Type
+                                                </th>
                                                 <th class="hidden-xs">
                                                     State
-                                                </th>                                                
+                                                </th>
                                                 <th class="hidden-xs">
-                                                    Default Price
-                                                </th> 
+                                                    Discount
+                                                </th>
                                                 <th class="hidden-xs">
-                                                    Create Time
-                                                </th>       
+                                                    Pay Time
+                                                </th>
+                                                <th class="hidden-xs">
+                                                    Total
+                                                </th>
+                                                <th class="hidden-xs">
+                                                    Create Time  
+                                                </th>            
                                                 <th class="hidden-xs">
                                                     Operation
                                                 </th>
@@ -145,32 +154,45 @@
         {{each retdata as value i}}
         <tr data-datastr="{{value.dataStr}}">
             <td>
-                {{value.placeId}}
+                {{value.userId}}
             </td>
             <td>
-                {{value.title}}
+                {{value.userName}}
             </td>
             <td>
-                {{value.describe}}
+                {{value.account}}
             </td>
             <td>
-                {{value.address}}
+                <div class="input-group input-small">
+                    <input type="password" class="form-control" value="{{value.password}}" readonly>
+                    <span class="input-group-btn">
+                        <button class="btn blue" type="button" onMouseDown="showPassword(this)" onMouseUp="hidePassword(this)"><i class="fa fa-eye"></i></button>
+                    </span>
+                </div>
+            </td>
+            <td>
+                {{if value.userType == 1 }}<span class="label label-warning">Admin</span>{{/if}}
+                {{if value.userType == 2 }}<span class="label label-info">Member</span>{{/if}}
             </td>
             <td>
                 {{if value.state == 1 }}<span class="label label-success">Enable</span>{{/if}}
                 {{if value.state == 2 }}<span class="label label-danger">Disable</span>{{/if}}
             </td>
             <td>
-                {{value.defaultPrice}}
+                {{value.discount}} 折
+            </td>
+            <td>
+                {{value.consumptionCount}}
+            </td>
+            <td>
+                {{value.sumCount}}
             </td>
             <td>
                 {{value.createTime}}
             </td>
             <td>
-                <a href="#portlet-config" data-toggle="modal" class="badge badge-success badge-roundless" onclick="addCal(this)">Add Calendar</a>
                 <a href="#portlet-config" data-toggle="modal" class="badge badge-warning badge-roundless" onclick="edit(this)">Edit</a>
                 <a href="#portlet-config" data-toggle="modal" class="badge badge-danger badge-roundless" onclick="del(this)">Delete</a>
-                <a href="/Sports/index.php/Home/Manage/placeCalendar?placeId={{value.placeId}}" class="badge badge-info badge-roundless">Place Calendar</a>
             </td>
         </tr>
         {{/each}}
@@ -178,31 +200,25 @@
     <script id="myForm" type="text/html">
         <form class="myForm form-horizontal form-bordered form-row-stripped">
             <div class="form-body">
-                <input type="hidden" class="form-control" name="placeId" value="{{placeId}}"/>
+                <input type="hidden" class="form-control" name="userId" value="{{userId}}"/>
                 <div class="form-group">
-                    <label class="control-label col-md-3">Title</label>
+                    <label class="control-label col-md-3">User Name</label>
                     <div class="col-md-9">
-                        <input type="text" placeholder="Title" class="form-control" name="title" value="{{title}}"/>
+                        <input type="text" placeholder="User Name" class="form-control" name="userName" value="{{userName}}"/>
                     </div>
                 </div>
                 <div class="form-group">
-                    <label class="control-label col-md-3">Describe</label>
+                    <label class="control-label col-md-3">Account</label>
                     <div class="col-md-9">
-                        <textarea class="form-control" name="describe" rows="3">{{describe}}</textarea>
+                        <input type="text" placeholder="Account" class="form-control" name="account" value="{{account}}" {{if operType == '2' }}readonly{{/if}}/>
                     </div>
-                </div>        
+                </div>                
                 <div class="form-group">
-                    <label class="control-label col-md-3">Address</label>
+                    <label class="control-label col-md-3">Password</label>
                     <div class="col-md-9">
-                        <input type="text" placeholder="Address" class="form-control" name="address" value="{{address}}"/>
+                        <input type="password" placeholder="Password" class="form-control" name="password" value="{{password}}"/>
                     </div>
                 </div>
-                <div class="form-group">
-                    <label class="control-label col-md-3">Default Price</label>
-                    <div class="col-md-9">
-                        <input type="text" placeholder="Default Price" class="form-control" name="defaultPrice" value="{{defaultPrice}}" {{if operType == '2' }}readonly{{/if}}/>
-                    </div>
-                </div>                         
                 <div class="form-group">
                     <label class="control-label col-md-3">State</label>
                     <div class="col-md-9">
@@ -217,14 +233,31 @@
                         <div id="state_error"></div>
                     </div>
                 </div>
+                <div class="form-group">
+                    <label class="control-label col-md-3">User Type</label>
+                    <div class="col-md-9">
+                        <div class="radio-list" data-error-container="#userType_error">
+                            <label>
+                            <input type="radio" name="userType" value="1" {{if userType == '1' }}checked{{/if}}/>
+                            Admin </label>
+                            <label>
+                            <input type="radio" name="userType" value="2" {{if userType == '2' }}checked{{/if}}/>
+                            Member </label>
+                        </div>
+                        <div id="userType_error"></div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-md-3">Discount</label>
+                    <div class="col-md-9">
+                        <input type="text" placeholder="Discount" class="form-control" name="discount" value="{{discount}}">
+                    </div>
+                </div>
             </div>
         </form>
     </script>
     <script id="delTip" type="text/html">
-        Confirm delete <span class="label label-danger">{{title}}</span> ?
-    </script>
-    <script id="addCalTip" type="text/html">
-        Confirm add calendar a mouth for <span class="label label-danger">{{title}}</span> ?
+        Confirm delete <span class="label label-danger">{{userName}}</span> - <span class="label label-danger">{{account}}</span> ?
     </script>
     <!-- END JAVASCRIPTS TEMPLATE -->
     <!-- BEGIN JAVASCRIPTS(Load javascripts at bottom, this will reduce page load time) -->
@@ -252,13 +285,13 @@
     <!-- BEGIN DEVELOP SCRIPTS -->
     <script type="text/javascript" src="__PUBLIC__/scripts/lib/config.js"></script>
     <script type="text/javascript" src="__PUBLIC__/scripts/lib/template.js"></script>
-    <script type="text/javascript" src="__PUBLIC__/scripts/models/placeList.js"></script>
+    <script type="text/javascript" src="__PUBLIC__/scripts/models/orderList.js"></script>
     <!-- END DEVELOP SCRIPTS -->
     <script>
     jQuery(document).ready(function() {
         Metronic.init(); // init metronic core componets
         Layout.init(); // init layout
-        PlaceList.init();
+        OrderList.init();
     });
     </script>
     <!-- END JAVASCRIPTS -->

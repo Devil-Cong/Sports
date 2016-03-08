@@ -114,7 +114,7 @@ INSERT INTO `sp_power` VALUES ('8', 'Manage', 'placeList', 'Manage/placeList', '
 INSERT INTO `sp_power` VALUES ('9', 'Manage', 'editPlace', 'Manage/editPlace', '0', '1', 'Edit Place', '1', null, null);
 INSERT INTO `sp_power` VALUES ('10', 'Manage', 'deletePlace', 'Manage/deletePlace', '0', '1', 'Delete Place', '1', null, null);
 INSERT INTO `sp_power` VALUES ('11', 'Manage', 'addPlaceCalendar', 'Manage/addPlaceCalendar', '0', '1', 'Add Place Calendar', '1', null, null);
-INSERT INTO `sp_power` VALUES ('12', 'Manage', 'placeCalendar', 'Manage/placeCalendar', '1', '1', 'Place Calendar', '1', 'icon-bar-chart', null);
+INSERT INTO `sp_power` VALUES ('12', 'Manage', 'placeCalendar', 'Manage/placeCalendar', '0', '1', 'Place Calendar', '1', 'icon-bar-chart', null);
 INSERT INTO `sp_power` VALUES ('13', 'Manage', 'editSinglePlaceCalendarPrice', 'Manage/editSinglePlaceCalendarPrice', '0', '1', 'Edit Single Place Calendar Price', '1', null, null);
 INSERT INTO `sp_power` VALUES ('14', 'Manage', 'editBatchPlaceCalendarPrice', 'Manage/editBatchPlaceCalendarPrice', '0', '1', 'Edit Batch Place Calendar Price', '1', null, null);
 
