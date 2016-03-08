@@ -97,33 +97,87 @@ var PlaceCalendar = function() {
             }
         });
     },
-    submitUserData = function(jsonData){
-        // $.ajax({
-        //     url: 'http://' + sports.phpServiceInterface + '/index.php/Home/Manage/editUser',
-        //     data: 'json_data=' + jsonData,
-        //     type: 'post',
-        //     cache: false,
-        //     dataType: 'json',
-        //     success: function(data) {
-        //         if (data.retcode) {
-        //             switch (data.retcode) {
-        //                 case '1':
-        //                     $('.closeBtn').click();
-        //                     toastr.success(data.retmsg, "Notifications");
-        //                     getDataAjax(false);
-        //                     break;
-        //                 case '-1':
-        //                     toastr.warning(data.retmsg, "Notifications");
-        //                     break;
-        //                 default:
-        //                     toastr.error(data.retmsg, "Notifications");
-        //                     break;
-        //             }
-        //         }
-        //     },
-        //     error: function() {}
-        // });
+    initRangePickerValidate = function(){
+        $('.myRangePicker').validate({
+            errorElement: 'span',
+            errorClass: 'help-block',
+            focusInvalid: true,
+            ignore: '',
+            rules: {
+                rangePicker: {
+                    required: true
+                },
+                price: {
+                    required: true
+                }
+            },
+            messages: {
+                rangePicker: {
+                    required: "Date Ranges is required."
+                },
+                price: {
+                    required: "Place Calendar Price is required."
+                }
+            },
+            invalidHandler: function(event, validator) {
+
+            },
+            highlight: function(element) {
+                $(element)
+                    .closest('.form-group').addClass('has-error');
+            },
+            success: function(label) {
+                label.closest('.form-group').removeClass('has-error');
+                label.remove();
+            },
+            errorPlacement: function(error, element) {
+                if (element.parents('.rangePicker').size() > 0) {
+                    error.appendTo(element.parents('.rangePicker').attr("data-error-container"));
+                }else{
+                    error.insertAfter(element);
+                }
+            },
+            submitHandler: function(form) {
+
+            }
+        });
+    },
+    initPriceValidate = function(){
+        $('.price').validate({
+            errorElement: 'span',
+            errorClass: 'help-block',
+            focusInvalid: true,
+            ignore: '',
+            rules: {
+                price: {
+                    required: true
+                }
+            },
+            messages: {
+                price: {
+                    required: "Place Calendar Price is required."
+                }
+            },
+            invalidHandler: function(event, validator) {
+
+            },
+            highlight: function(element) {
+                $(element)
+                    .closest('.form-group').addClass('has-error');
+            },
+            success: function(label) {
+                label.closest('.form-group').removeClass('has-error');
+                label.remove();
+            },
+            errorPlacement: function(error, element) {
+                error.insertAfter(element);
+            },
+            submitHandler: function(form) {
+
+            }
+        });
     };
+
     window.picker = function(){
         var data = { };
         $('.modal-title').text('Select Months');
@@ -146,7 +200,7 @@ var PlaceCalendar = function() {
         initPickerValidate();
         $('.submit').text('Select').unbind().bind('click', function() {
             if ($('.myPicker').validate().form()) {
-               var jsonData = JSON.stringify({
+                var jsonData = JSON.stringify({
                     placeId : sports.$_GET('placeId'),
                     month   : moment($('.date-picker').datepicker('getDate')).format('YYYY-MM')
                 });
@@ -154,50 +208,139 @@ var PlaceCalendar = function() {
             }
         });
     };
-    window.edit = function(obj){
-        var data = $(obj).parent().parent().data('datastr');
-        data.operType = '2';
-        $('.modal-title').text('Edit User');
-        var html = template('myForm', data);
-        $('.modal-body').addClass('form').empty().html(html);
-        initFormValidate();
-        $('.submit').text('Save changes').unbind().bind('click', function() {
-            if ($('.myForm').validate().form()) {
+
+    window.rangePicker = function(){
+        var data = { };
+        $('.modal-title').text('Date Ranges');
+        var html = template('myRangePicker', data);
+        $('.modal-body').removeClass('form').empty().html(html);
+        // 初始化日历控件
+        $('.rangePicker').daterangepicker({
+                opens: (Metronic.isRTL() ? 'left' : 'right'),
+                format: 'YYYY-MM-DD',
+                separator: ' to ',
+                startDate: moment(),
+                endDate: moment().add(3, 'days'),
+                minDate: window.dateRangeData.startDay,
+                maxDate: window.dateRangeData.endDay,
+            },
+            function (start, end) {
+                $('.rangePicker input').val(start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD'));
+                $('.myRangePicker').validate().form();
+            }
+        );
+        initRangePickerValidate();
+        $('.submit').text('Select').unbind().bind('click', function() {
+            if ($('.myRangePicker').validate().form()) {
+                var jsonData = JSON.stringify({
+                    placeId     : sports.$_GET('placeId'),
+                    startDay    : moment($('.rangePicker').data('daterangepicker').startDate).format('YYYY-MM-DD'),
+                    endDay      : moment($('.rangePicker').data('daterangepicker').endDate).format('YYYY-MM-DD'),
+                    price       : $('input[name="price"]').val().trim()
+                });
+                $.ajax({
+                    url: 'http://' + sports.phpServiceInterface + '/index.php/Home/Manage/editBatchPlaceCalendarPrice',
+                    data: 'json_data=' + jsonData,
+                    type: 'post',
+                    cache: false,
+                    dataType: 'json',
+                    success: function(data) {
+                        if (data.retcode) {
+                            switch (data.retcode) {
+                                case '1':
+                                    $('.closeBtn').click();
+                                    toastr.success(data.retmsg, "Notifications");
+                                    jsonData = JSON.stringify({
+                                        placeId : sports.$_GET('placeId'),
+                                        month   : moment($('.rangePicker').data('daterangepicker').startDate).format('YYYY-MM')
+                                    });
+                                    getDataAjax(jsonData);
+                                    break;
+                                default:
+                                    toastr.error(data.retmsg, "Notifications");
+                                    break;
+                            }
+                        }
+                    },
+                    error: function() {}
+                });
 
             }
         });
     };
 
-    window.del = function(obj){
-        var data = $(obj).parent().parent().data('datastr');
-        $('.modal-title').text('Delete User');
-        var html = template('delTip', data);
-        $('.modal-body').removeClass('form').empty().html(html);
-        $('.submit').text('Confirm').unbind().bind('click', function() {
-            $.ajax({
-                url: 'http://' + sports.phpServiceInterface + '/index.php/Home/Manage/deleteUser',
-                data: 'json_data=' + JSON.stringify({ userId:data.userId }),
-                type: 'post',
-                cache: false,
-                dataType: 'json',
-                success: function(data) {
-                    if (data.retcode) {
-                        switch (data.retcode) {
-                            case '1':
-                                $('.closeBtn').click();
-                                toastr.success(data.retmsg, "Notifications");
-                                getDataAjax(false);
-                                break;
-                            default:
-                                toastr.error(data.retmsg, "Notifications");
-                                break;
+    window.editPrice = function(obj){
+        var objData = $(obj).parent().data('datastr');
+        $('.modal-title').text('Edit Place Calendar Price');
+        var html = template('price', objData);
+        $('.modal-body').addClass('form').empty().html(html);
+        initPriceValidate();
+        $('.submit').text('Save changes').unbind().bind('click', function() {
+            if ($('.price').validate().form()) {
+                var jsonData = JSON.stringify({
+                    id      : $('input[name="id"]').val().trim(),
+                    price   : $('input[name="price"]').val().trim()
+                });
+                $.ajax({
+                    url: 'http://' + sports.phpServiceInterface + '/index.php/Home/Manage/editSinglePlaceCalendarPrice',
+                    data: 'json_data=' + jsonData,
+                    type: 'post',
+                    cache: false,
+                    dataType: 'json',
+                    success: function(data) {
+                        if (data.retcode) {
+                            switch (data.retcode) {
+                                case '1':
+                                    $('.closeBtn').click();
+                                    toastr.success(data.retmsg, "Notifications");
+                                    jsonData = JSON.stringify({
+                                        placeId : sports.$_GET('placeId'),
+                                        month   : objData.month
+                                    });
+                                    getDataAjax(jsonData);
+                                    break;
+                                default:
+                                    toastr.error(data.retmsg, "Notifications");
+                                    break;
+                            }
                         }
-                    }
-                },
-                error: function() {}
-            });
+                    },
+                    error: function() {}
+                });
+            }
         });
     };
+
+    // window.del = function(obj){
+    //     var data = $(obj).parent().parent().data('datastr');
+    //     $('.modal-title').text('Delete User');
+    //     var html = template('delTip', data);
+    //     $('.modal-body').removeClass('form').empty().html(html);
+    //     $('.submit').text('Confirm').unbind().bind('click', function() {
+    //         $.ajax({
+    //             url: 'http://' + sports.phpServiceInterface + '/index.php/Home/Manage/deleteUser',
+    //             data: 'json_data=' + JSON.stringify({ userId:data.userId }),
+    //             type: 'post',
+    //             cache: false,
+    //             dataType: 'json',
+    //             success: function(data) {
+    //                 if (data.retcode) {
+    //                     switch (data.retcode) {
+    //                         case '1':
+    //                             $('.closeBtn').click();
+    //                             toastr.success(data.retmsg, "Notifications");
+    //                             getDataAjax(false);
+    //                             break;
+    //                         default:
+    //                             toastr.error(data.retmsg, "Notifications");
+    //                             break;
+    //                     }
+    //                 }
+    //             },
+    //             error: function() {}
+    //         });
+    //     });
+    // };
     return {
         init: function() {
             var jsonData = JSON.stringify({
@@ -206,20 +349,6 @@ var PlaceCalendar = function() {
             });
             getDataAjax(jsonData);
             getDateRangeAjax();
-
-            // $('#defaultrange_modal').daterangepicker({
-            //         opens: (Metronic.isRTL() ? 'left' : 'right'),
-            //         format: 'MM/DD/YYYY',
-            //         separator: ' to ',
-            //         startDate: moment().subtract('days', 29),
-            //         endDate: moment(),
-            //         minDate: '01/01/2012',
-            //         maxDate: '12/31/2018',
-            //     },
-            //     function (start, end) {
-            //         $('#defaultrange_modal input').val(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
-            //     }
-            // );
         }
 
     };

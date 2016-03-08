@@ -307,4 +307,41 @@ class ManageController extends BaseController {
 		$result = $placeCalendar->addAll($dataList);
 		return $result;
 	}
+
+	// 修改单个场地价格
+	public function editSinglePlaceCalendarPrice() {
+		$jsonData      = json_decode($_POST['json_data'], true);
+		$map['id']     = $jsonData['id'];
+		$data['price'] = $jsonData['price'] * 100;
+		$placeCalendar = M('PlaceCalendar');
+		$result        = $placeCalendar->where($map)->save($data);
+		if ($result !== false) {
+			$ret['retcode'] = '1';
+			$ret['retmsg']  = 'Edit single place calendar price success.';
+		} else {
+			$ret['retcode'] = '-99';
+			$ret['retmsg']  = 'Edit single place calendar price fail.';
+		}
+		echo json_encode($ret, JSON_UNESCAPED_UNICODE);
+	}
+
+	// 批量修改场地价格
+	public function editBatchPlaceCalendarPrice() {
+		$jsonData        = json_decode($_POST['json_data'], true);
+		$map             = null;
+		$map['place_id'] = $jsonData['placeId'];
+		$map['date']     = array('BETWEEN', array($jsonData['startDay'], $jsonData['endDay']));
+		$map['state']    = '1';
+		$data['price']   = $jsonData['price'] * 100;
+		$placeCalendar   = M('PlaceCalendar');
+		$result          = $placeCalendar->where($map)->save($data);
+		if ($result !== false) {
+			$ret['retcode'] = '1';
+			$ret['retmsg']  = 'Edit batch place calendar price success.';
+		} else {
+			$ret['retcode'] = '-99';
+			$ret['retmsg']  = 'Edit batch place calendar price fail.';
+		}
+		echo json_encode($ret, JSON_UNESCAPED_UNICODE);
+	}
 }

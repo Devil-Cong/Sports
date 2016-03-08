@@ -78,7 +78,7 @@
                                         <a href="#portlet-config" data-toggle="modal" onclick="picker()"><i class="fa fa-calendar"></i>  Select Month </a>
                                     </li>
                                     <li>
-                                        <a href="#portlet-config" data-toggle="modal"><i class="fa  fa-check-square-o"></i>  Batch Modify </a>
+                                        <a href="#portlet-config" data-toggle="modal" onclick="rangePicker()"><i class="fa  fa-check-square-o"></i>  Batch Modify </a>
                                     </li>
                                 </ul>
                             </div>
@@ -165,8 +165,8 @@
                             <span class="price">￥{{value.price}}</span>
                         </td>
                     {{else}}
-                        <td class="cal-dt">
-                            <a href="#portlet-config" data-toggle="modal" class="price-btn">
+                        <td class="cal-dt" data-datastr="{{value.dataStr}}">
+                            <a href="#portlet-config" data-toggle="modal" class="price-btn" onclick="editPrice(this)">
                                 <span class="day">{{value.day}}<span><br/>
                                 <span class="price">￥{{value.price}}</span>
                             </a>
@@ -196,16 +196,44 @@
             </div>
         </form>
     </script>
+    <script id="price" type="text/html">
+        <form class="price form-horizontal form-bordered form-row-stripped">
+            <div class="form-body">
+                <input type="hidden" class="form-control" name="id" value="{{id}}"/>
+                <div class="form-group">
+                    <label class="control-label col-md-4">Place Calendar Date</label>
+                    <div class="col-md-8">
+                        <input type="text" placeholder="Place Calendar Date" class="form-control" name="date" value="{{date}}" readonly/>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-md-4">Place Calendar Price</label>
+                    <div class="col-md-8">
+                        <input type="text" placeholder="Place Calendar Price" class="form-control" name="price" value="{{price}}"/>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </script>
     <script id="myRangePicker" type="text/html">
-        <form class="form-horizontal">
-            <div class="form-group">
-                <label class="control-label col-md-4">Default Date Ranges</label>
-                <div class="col-md-8">
-                    <div class="input-group input-large" id="rangePicker">
-                        <input type="text" class="form-control" readonly>
-                        <span class="input-group-btn">
-                            <button class="btn default date-range-toggle" type="button"><i class="fa fa-calendar"></i></button>
-                        </span>
+        <form class="myRangePicker form-horizontal">
+            <div class="form-body">
+                <div class="form-group">
+                    <label class="control-label col-md-4">Date Ranges</label>
+                    <div class="col-md-8">
+                        <div class="input-group input-large rangePicker" data-error-container="#rangePicker_error">
+                            <input type="text" class="form-control" name="rangePicker" readonly>
+                            <span class="input-group-btn">
+                                <button class="btn default date-range-toggle" type="button"><i class="fa fa-calendar"></i></button>
+                            </span>
+                        </div>                    
+                        <div id="rangePicker_error"></div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-md-4">Place Calendar Price</label>
+                    <div class="col-md-8">
+                        <input type="text" placeholder="Place Calendar Price" class="form-control" name="price"/>
                     </div>
                 </div>
             </div>
