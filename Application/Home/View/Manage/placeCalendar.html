@@ -56,7 +56,7 @@
                     <!-- /.modal -->
                     <!-- END SAMPLE PORTLET CONFIGURATION MODAL FORM-->
                     <!-- BEGIN PAGE HEADER-->
-                    <h3 class="page-title">Place Calendar Manage</h3>
+                    <h3 class="page-title">Place Calendar Manage </h3>
                     <div class="page-bar">
                         <ul class="page-breadcrumb">
                             <li>
@@ -78,8 +78,13 @@
                                         <a href="#portlet-config" data-toggle="modal" onclick="picker()"><i class="fa fa-calendar"></i>  Select Month </a>
                                     </li>
                                     <li>
-                                        <a href="#portlet-config" data-toggle="modal" onclick="rangePicker()"><i class="fa  fa-check-square-o"></i>  Batch Modify </a>
+                                        <a href="#portlet-config" data-toggle="modal" onclick="rangePicker()"><i class="fa fa-check-square-o"></i>  Batch Modify </a>
                                     </li>
+                                    <if condition="$Think.session.user.user_type elt 1">
+                                    <li>
+                                        <a onclick="changePattern()"><i class="fa fa-exchange"></i>  Change Pattern </a> <!-- Admin show this button -->
+                                    </li>
+                                    </if>  
                                 </ul>
                             </div>
                         </div>
@@ -88,6 +93,9 @@
                     <!-- BEGIN PAGE CONTAINER-->
                     <div class="row">
                         <div class="col-md-12">
+                            <div class="alert alert-info" style="display: none;">
+                                <center><strong>Notifications!</strong>&nbsp;&nbsp;&nbsp; You are in the Order Pattern.</center>
+                            </div>
                             <!-- BEGIN EXAMPLE TABLE PORTLET-->
                             <div class="portlet box red-intense">
                                 <div class="portlet-title">
@@ -166,7 +174,7 @@
                         </td>
                     {{else}}
                         <td class="cal-dt" data-datastr="{{value.dataStr}}">
-                            <a href="#portlet-config" data-toggle="modal" class="price-btn" onclick="editPrice(this)">
+                            <a href="#portlet-config" data-toggle="modal" class="price-btn">
                                 <span class="day">{{value.day}}<span><br/>
                                 <span class="price">￥{{value.price}}</span>
                             </a>
@@ -239,6 +247,37 @@
             </div>
         </form>
     </script>
+    <script id="myForm" type="text/html">
+        <form class="myForm form-horizontal form-bordered form-row-stripped">
+            <div class="form-body">
+                <input type="hidden" class="form-control" name="goodsId" value="{{id}}"/>
+                <div class="form-group">
+                    <label class="control-label col-md-3">Date</label>
+                    <div class="col-md-9">
+                        <input type="text" placeholder="Date" class="form-control" name="date" value="{{date}}" readonly/>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-md-3">Price</label>
+                    <div class="col-md-9">
+                        <input type="text" placeholder="Price" class="form-control" name="price" value="{{price}}" readonly/>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-md-3">Orderer</label>
+                    <div class="col-md-9">
+                        <input type="text" placeholder="Orderer" class="form-control" name="orderer" value="<{$Think.session.user.user_name}>"/>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-md-3">Mobile</label>
+                    <div class="col-md-9">
+                        <input type="text" placeholder="Mobile" class="form-control" name="mobile" value="<{$Think.session.user.account}>"/>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </script>
     <script id="delTip" type="text/html">
         Confirm delete <span class="label label-danger">{{userName}}</span> - <span class="label label-danger">{{account}}</span> ?
     </script>
@@ -273,6 +312,9 @@
     jQuery(document).ready(function() {
         Metronic.init(); // init metronic core componets
         Layout.init(); // init layout
+        <if condition="$Think.session.user.user_type gt 1">
+            PlaceCalendar.orderPattern = true; // Member default use Order Pattern
+        </if>        
         PlaceCalendar.init();
     });
     </script>

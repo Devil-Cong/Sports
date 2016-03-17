@@ -26,6 +26,7 @@ var PlaceCalendar = function() {
                             var html = template('tableBody', data.retdata);
                             $('#myTable tbody').empty().html(html);
                             $('.year-month center').text(data.retdata.month);
+                            window.changePattern();
                             break;
                         default:
                             toastr.error(data.retmsg, "Notifications");
@@ -176,6 +177,29 @@ var PlaceCalendar = function() {
 
             }
         });
+    };
+
+    window.changePattern = function(){
+        if( PlaceCalendar.orderPattern ){
+            $('.alert-info').show('400');
+            PlaceCalendar.orderPattern = !PlaceCalendar.orderPattern;
+            $('.price-btn').unbind().bind('click', function() {
+                window.order($(this));
+            });
+        }else{
+            $('.alert-info').hide('400');
+            PlaceCalendar.orderPattern = !PlaceCalendar.orderPattern;
+            $('.price-btn').unbind().bind('click', function() {
+                window.editPrice($(this));
+            });
+        }
+    };
+
+    window.order = function(obj){
+        var objData = $(obj).parent().data('datastr');
+        $('.modal-title').text('Order Place Calendar');
+        var html = template('myForm', objData);
+        $('.modal-body').addClass('form').empty().html(html);
     };
 
     window.picker = function(){
@@ -342,7 +366,8 @@ var PlaceCalendar = function() {
     //     });
     // };
     return {
-        init: function() {
+        orderPattern : false, // default Order Pattern ?
+        init    : function() {
             var jsonData = JSON.stringify({
                 placeId : sports.$_GET('placeId'),
                 month   : moment().format('YYYY-MM')
