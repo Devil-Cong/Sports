@@ -30,6 +30,16 @@ class ManageController extends BaseController {
 		$this->display();
 	}
 
+	public function orderList() {
+		$this->assign('urlInfo', CONTROLLER_NAME . '/' . ACTION_NAME);
+		$this->display();
+	}
+
+	public function myOrderList() {
+		$this->assign('urlInfo', CONTROLLER_NAME . '/' . ACTION_NAME);
+		$this->display();
+	}
+
 	// 编辑用户信息
 	public function editUser() {
 		$jsonData       = json_decode($_POST['json_data'], true);
@@ -150,7 +160,7 @@ class ManageController extends BaseController {
 				$result['title']           = $jsonData['title'];
 				$result['describe']        = $jsonData['describe'];
 				$result['state']           = $jsonData['state'];
-				$result['people_capacity'] = $jsonData['peopleCapacity'];
+				$result['people_capacity'] = $jsonData['peopleCapacity'] > $result['exist_people'] ? $jsonData['peopleCapacity'] : $result['exist_people'];
 				$result['coach']           = $jsonData['coach'];
 				$result['times']           = $jsonData['times'];
 				$result['classroom']       = $jsonData['classroom'];
@@ -230,7 +240,6 @@ class ManageController extends BaseController {
 				$result['state']         = $jsonData['state'];
 				$result['address']       = $jsonData['address'];
 				$result['default_price'] = $jsonData['defaultPrice'] * 100;
-				$result['create_time']   = date('Y-m-d H:i:s');
 				$result                  = $place->save($result);
 				if ($result !== false) {
 					$ret['retcode'] = '1';
@@ -341,6 +350,201 @@ class ManageController extends BaseController {
 		} else {
 			$ret['retcode'] = '-99';
 			$ret['retmsg']  = 'Edit batch place calendar price fail.';
+		}
+		echo json_encode($ret, JSON_UNESCAPED_UNICODE);
+	}
+
+	// 新增场地订单
+	public function addPlaceOrder() {
+		$jsonData               = json_decode($_POST['json_data'], true);
+		$placeCalendar          = M('PlaceCalendar');
+		$map['id']              = $jsonData['goodsId'];
+		$data['original_price'] = $placeCalendar->where($map)->getField('price');
+		if (!$data['original_price']) {
+			$ret['retcode'] = '-99';
+			$ret['retmsg']  = 'Query goods price fail.';
+		} else {
+			$data['payment_price'] = $data['original_price'] * (session('user')['discount'] / 100);
+			$data['order_type']    = 2;
+			$data['goods_id']      = $jsonData['goodsId'];
+			$data['orderer']       = $jsonData['orderer'];
+			$data['mobile']        = $jsonData['mobile'];
+			$data['user_id']       = session('user')['user_id'];
+			$data['create_time']   = date('Y-m-d H:i:s');
+			$data['state']         = 1;
+			$data['order_no']      = date('YmdHis') . '02' . mt_rand(1000, 9999);
+			$order                 = M('Order');
+			$result                = $order->add($data);
+			if ($result) {
+				$result = $this->__lockOrUnlockPlaceCalendar('lock', $jsonData['goodsId']);
+				if ($result !== false) {
+					$ret['retcode'] = '1';
+					$ret['retmsg']  = 'Add order and update place calendar success.';
+				} else {
+					$ret['retcode'] = '-99';
+					$ret['retmsg']  = 'Add order success but update place calendar fail.';
+				}
+			} else {
+				$ret['retcode'] = '-99';
+				$ret['retmsg']  = 'Add order fail.';
+			}
+
+		}
+		echo json_encode($ret, JSON_UNESCAPED_UNICODE);
+	}
+
+	// 私用 锁定或者释放场地日历
+	private function __lockOrUnlockPlaceCalendar($state, $id) {
+		$placeCalendar = M('PlaceCalendar');
+		$data['id']    = $id;
+		switch ($state) {
+		case 'lock':
+			$data['state'] = 2;
+			break;
+		case 'unlock':
+			$data['state'] = 1;
+			break;
+		}
+		$result = $placeCalendar->save($data);
+		return $result;
+	}
+
+	// 新增课程订单
+	public function addCourseOrder() {
+		$jsonData         = json_decode($_POST['json_data'], true);
+		$course           = M('Course');
+		$map['course_id'] = $jsonData['goodsId'];
+		$result           = $course->where($map)->find();
+		if (!$result) {
+			$ret['retcode'] = '-99';
+			$ret['retmsg']  = 'Query goods fail.';
+		} else {
+			if ($result['people_capacity'] > $result['exist_people']) {
+				$data['original_price'] = $result['price'];
+				$data['payment_price']  = $data['original_price'] * (session('user')['discount'] / 100);
+				$data['order_type']     = 1;
+				$data['goods_id']       = $jsonData['goodsId'];
+				$data['orderer']        = $jsonData['orderer'];
+				$data['mobile']         = $jsonData['mobile'];
+				$data['user_id']        = session('user')['user_id'];
+				$data['create_time']    = date('Y-m-d H:i:s');
+				$data['state']          = 1;
+				$data['order_no']       = date('YmdHis') . '01' . mt_rand(1000, 9999);
+				$order                  = M('Order');
+				$result                 = $order->add($data);
+				if ($result) {
+					$result = $this->__addOrReduceCoursePeopleNumber('add', $jsonData['goodsId']);
+					if ($result !== false) {
+						$ret['retcode'] = '1';
+						$ret['retmsg']  = 'Add order and update course people number success.';
+					} else {
+						$ret['retcode'] = '-99';
+						$ret['retmsg']  = 'Add order success but update course people number fail.';
+					}
+				} else {
+					$ret['retcode'] = '-99';
+					$ret['retmsg']  = 'Add order fail.';
+				}
+
+			} else {
+				$ret['retcode'] = '-99';
+				$ret['retmsg']  = 'The number of course is full.';
+			}
+
+		}
+		echo json_encode($ret, JSON_UNESCAPED_UNICODE);
+	}
+
+	// 私用 增加或减少课程人数
+	private function __addOrReduceCoursePeopleNumber($state, $id) {
+		$course           = M('Course');
+		$map['course_id'] = $id;
+		$result           = $course->where($map)->find();
+		switch ($state) {
+		case 'add':
+			$result['exist_people'] += 1;
+			break;
+		case 'reduce':
+			$result['exist_people'] = ($result['exist_people'] > 0) ? ($result['exist_people'] - 1) : 0;
+			break;
+		}
+		$result = $course->save($result);
+		return $result;
+	}
+
+	public function cancelOrder() {
+		$jsonData        = json_decode($_POST['json_data'], true);
+		$map['order_id'] = $jsonData['orderId'];
+		$order           = M('Order');
+		$result          = $order->where($map)->find();
+		if (!$result) {
+			$ret['retcode'] = '-99';
+			$ret['retmsg']  = 'Query order fail.';
+		} else {
+			$result['state'] = '2';
+			$tip             = $order->save($result);
+			if ($tip !== false) {
+				switch ($result['order_type']) {
+				case '1':
+					$tip = $this->__addOrReduceCoursePeopleNumber('reduce', $result['goods_id']);
+					if ($tip !== false) {
+						$ret['retcode'] = '1';
+						$ret['retmsg']  = 'Cancel order and update course people number success.';
+					} else {
+						$ret['retcode'] = '-99';
+						$ret['retmsg']  = 'Cancel order success but update course people number fail.';
+					}
+					break;
+				case '2':
+					$tip = $this->__lockOrUnlockPlaceCalendar('unlock', $result['goods_id']);
+					if ($tip !== false) {
+						$ret['retcode'] = '1';
+						$ret['retmsg']  = 'Add order and update place calendar success.';
+					} else {
+						$ret['retcode'] = '-99';
+						$ret['retmsg']  = 'Add order success but update place calendar fail.';
+					}
+					break;
+				}
+			} else {
+				$ret['retcode'] = '-99';
+				$ret['retmsg']  = 'Cancel order fail.';
+			}
+		}
+		echo json_encode($ret, JSON_UNESCAPED_UNICODE);
+	}
+
+	public function endOrder() {
+		$jsonData        = json_decode($_POST['json_data'], true);
+		$map['order_id'] = $jsonData['orderId'];
+		$order           = M('Order');
+		$result          = $order->where($map)->find();
+		if (!$result) {
+			$ret['retcode'] = '-99';
+			$ret['retmsg']  = 'Query order fail.';
+		} else {
+			$result['state'] = '3';
+			$tip             = $order->save($result);
+			if ($tip !== false) {
+				$map            = null;
+				$map['user_id'] = $result['user_id'];
+				$user           = M('User');
+				$userInfo       = $user->where($map)->find();
+				$userInfo['consumption_count'] += 1;
+				$userInfo['sum_count'] += $result['payment_price'];
+				$tip = $user->save($userInfo);
+				if ($tip !== false) {
+					$ret['retcode'] = '1';
+					$ret['retmsg']  = 'End order and update user info success.';
+				} else {
+
+					$ret['retcode'] = '-99';
+					$ret['retmsg']  = 'End order success but update user info fail.';
+				}
+			} else {
+				$ret['retcode'] = '-99';
+				$ret['retmsg']  = 'End order fail.';
+			}
 		}
 		echo json_encode($ret, JSON_UNESCAPED_UNICODE);
 	}

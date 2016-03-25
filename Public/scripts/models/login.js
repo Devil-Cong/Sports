@@ -73,6 +73,10 @@ var Login = function() {
                         switch (data.retcode) {
                             case '1':
                                 $('.alert', $('.login-form')).removeClass('alert-danger').addClass('alert-success').show().find('span').text(data.retmsg + ' Redirecting...');
+
+                                setTimeout(function(){
+                                    window.location.href = 'http://' + sports.phpServiceInterface + '/index.php/Home/Manage/myOrderList';
+                                },1500);
                                 break;
                             default:
                                 $('.alert', $('.login-form')).removeClass('alert-success').addClass('alert-danger').show().find('span').text(data.retmsg);

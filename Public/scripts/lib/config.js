@@ -59,7 +59,35 @@ if(typeof toastr != "undefined"){
     // 类型: success/info/warning/error
 }
 
+// 扩展手机号码验证
 jQuery.validator.addMethod("isMobile", function(value, element) {    
     var length = value.length;    
     return this.optional(element) || (length == 11 && /^(((13[0-9]{1})|(15[0-9]{1})|(18[0-9]{1}))+\d{8})$/.test(value));    
 }, "Mobile phone number is wrong");
+
+// 注销
+window.logout = function(){
+    $.ajax({
+        url: 'http://' + sports.phpServiceInterface + '/index.php/Home/ManageInterface/logout',
+        data: 'json_data=',
+        type: 'post',
+        cache: false,
+        dataType: 'json',
+        success: function(data) {
+            if (data.retcode) {
+                switch (data.retcode) {
+                    case '1':
+                        toastr.success(data.retmsg + ' Redirecting...', "Notifications");
+                        setTimeout(function(){
+                            window.location.href = 'http://' + sports.phpServiceInterface + '/index.php';
+                        },1500);
+                        break;
+                    default:
+                        toastr.error(data.retmsg, "Notifications");
+                        break;
+                }
+            }
+        },
+        error: function() {}
+    });
+};

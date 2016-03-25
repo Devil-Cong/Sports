@@ -163,7 +163,91 @@ var CourseList = function() {
             },
             error: function() {}
         });
+    },
+    initOrderFormValidate = function(){
+        $('.orderForm').validate({
+            errorElement: 'span',
+            errorClass: 'help-block',
+            focusInvalid: true,
+            ignore: '',
+            rules: {
+                orderer: {
+                    required: true
+                },
+                mobile: {
+                    required: true,
+                    isMobile: true
+                }
+            },
+            messages: {
+                price: {
+                    required: "Orderer is required."
+                },
+                mobile: {
+                    required: "Mobile is required.",                    
+                    isMobile: "It must be mobile phone number."
+                }
+            },
+            invalidHandler: function(event, validator) {
+
+            },
+            highlight: function(element) {
+                $(element)
+                    .closest('.form-group').addClass('has-error');
+            },
+            success: function(label) {
+                label.closest('.form-group').removeClass('has-error');
+                label.remove();
+            },
+            errorPlacement: function(error, element) {
+                error.insertAfter(element);
+            },
+            submitHandler: function(form) {
+
+            }
+        });
     };
+
+    window.order = function(obj){
+        var objData = $(obj).parent().parent().data('datastr');
+        $('.modal-title').text('Order Course');
+        var html = template('orderForm', objData);
+        $('.modal-body').addClass('form').empty().html(html);
+        initOrderFormValidate();
+        $('.submit').text('Order').unbind().bind('click', function() {
+            if ($('.orderForm').validate().form()) {
+                var jsonData = JSON.stringify({ 
+                    goodsId : $('input[name="goodsId"]').val().trim(),
+                    orderer : $('input[name="orderer"]').val().trim(),
+                    mobile  : $('input[name="mobile"]').val().trim()
+                });
+                $.ajax({
+                    url: 'http://' + sports.phpServiceInterface + '/index.php/Home/Manage/addCourseOrder',
+                    data: 'json_data=' + jsonData,
+                    type: 'post',
+                    cache: false,
+                    dataType: 'json',
+                    success: function(data) { console.log(data);
+                        if (data.retcode) {
+                            switch (data.retcode) {
+                                case '1':
+                                    $('.closeBtn').click();
+                                    toastr.success(data.retmsg, "Notifications");
+                                    getDataAjax(false);
+                                    break;
+                                default:
+                                    toastr.error(data.retmsg, "Notifications");
+                                    break;
+                            }
+                        }
+                    },
+                    error: function() {}
+                });
+            }
+        });
+
+    };
+
     window.add = function(){
         var data = {
             operType : '1'

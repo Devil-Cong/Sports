@@ -37,6 +37,14 @@ class ManageInterfaceController extends Controller {
 		echo json_encode($ret, JSON_UNESCAPED_UNICODE);
 	}
 
+	// 注销
+	public function logout() {
+		session(null);
+		$ret['retcode'] = '1';
+		$ret['retmsg']  = 'Logout is successful.';
+		echo json_encode($ret, JSON_UNESCAPED_UNICODE);
+	}
+
 	// 查询所有用户
 	public function queryAllUser() {
 		$user             = M('User');
@@ -58,7 +66,7 @@ class ManageInterfaceController extends Controller {
 				$temp['userType']         = $value['user_type'];
 				$temp['state']            = $value['state'];
 				$temp['discount']         = $value['discount'] / 10;
-				$temp['consumptionCount'] = $value['consumption_count'] / 100;
+				$temp['consumptionCount'] = $value['consumption_count'];
 				$temp['sumCount']         = $value['sum_count'] / 100;
 				array_push($list, $temp);
 			}
@@ -130,6 +138,7 @@ class ManageInterfaceController extends Controller {
 		echo json_encode($ret, JSON_UNESCAPED_UNICODE);
 	}
 
+	// 查询场地详细日期价格
 	public function queryPlaceCalendar() {
 		$jsonData = json_decode($_POST['json_data'], true);
 		$day      = $jsonData['month'] . '-01';
@@ -219,13 +228,14 @@ class ManageInterfaceController extends Controller {
 				$ret['retmsg']  = 'success.';
 				$ret['retdata'] = array(
 					'list'  => $list,
-					'month' => date('F Y',strtotime($jsonData['month'])),
+					'month' => date('F Y', strtotime($jsonData['month'])),
 				);
 			}
 		}
 		echo json_encode($ret, JSON_UNESCAPED_UNICODE);
 	}
 
+	// 查询场地日历范围
 	public function queryPlaceCalendarRange() {
 		$jsonData        = json_decode($_POST['json_data'], true);
 		$placeCalendar   = M('PlaceCalendar');
@@ -247,6 +257,93 @@ class ManageInterfaceController extends Controller {
 			$ret['retmsg']  = 'success.';
 			$ret['retdata'] = $dateRange;
 		}
+
+		echo json_encode($ret, JSON_UNESCAPED_UNICODE);
+	}
+
+	// 查询所有订单
+	public function queryAllOrder() {
+		$order             = M('Order');
+		$map['order_type'] = '1';
+		$result            = $order->field('sp_order.*, sp_course.coach, sp_course.title')->join('sp_course ON sp_course.course_id = sp_order.goods_id')->where($map)->select();
+		$list              = [];
+		foreach ($result as $key => $value) {
+			$temp                  = null;
+			$temp['orderId']       = $value['order_id'];
+			$temp['orderNo']       = $value['order_no'];
+			$temp['orderer']       = $value['orderer'];
+			$temp['mobile']        = $value['mobile'];
+			$temp['originalPrice'] = $value['original_price'] / 100;
+			$temp['paymentPrice']  = $value['payment_price'] / 100;
+			$temp['createTime']    = $value['create_time'];
+			$temp['ordertype']     = $value['order_type'];
+			$temp['state']         = $value['state'];
+			$temp['goodsName']     = $value['coach'] . ' ' . $value['title'];
+			array_push($list, $temp);
+		}
+		$map['order_type'] = '2';
+		$result            = $order->field('sp_order.*, sp_place_calendar.date, sp_place.title')->join('sp_place_calendar ON sp_place_calendar.id = sp_order.goods_id')->join('sp_place ON sp_place.place_id = sp_place_calendar.place_id ')->where($map)->select();
+		foreach ($result as $key => $value) {
+			$temp                  = null;
+			$temp['orderId']       = $value['order_id'];
+			$temp['orderNo']       = $value['order_no'];
+			$temp['orderer']       = $value['orderer'];
+			$temp['mobile']        = $value['mobile'];
+			$temp['originalPrice'] = $value['original_price'] / 100;
+			$temp['paymentPrice']  = $value['payment_price'] / 100;
+			$temp['createTime']    = $value['create_time'];
+			$temp['ordertype']     = $value['order_type'];
+			$temp['state']         = $value['state'];
+			$temp['goodsName']     = $value['date'] . ' ' . $value['title'];
+			array_push($list, $temp);
+		}
+		$ret['retcode'] = '1';
+		$ret['retmsg']  = 'success.';
+		$ret['retdata'] = $list;
+
+		echo json_encode($ret, JSON_UNESCAPED_UNICODE);
+	}
+
+	// 查询所有订单
+	public function queryMyAllOrder() {
+		$order             = M('Order');
+		$map['user_id'] = session('user')['user_id'];
+		$map['order_type'] = '1';
+		$result            = $order->field('sp_order.*, sp_course.coach, sp_course.title')->join('sp_course ON sp_course.course_id = sp_order.goods_id')->where($map)->select();
+		$list              = [];
+		foreach ($result as $key => $value) {
+			$temp                  = null;
+			$temp['orderId']       = $value['order_id'];
+			$temp['orderNo']       = $value['order_no'];
+			$temp['orderer']       = $value['orderer'];
+			$temp['mobile']        = $value['mobile'];
+			$temp['originalPrice'] = $value['original_price'] / 100;
+			$temp['paymentPrice']  = $value['payment_price'] / 100;
+			$temp['createTime']    = $value['create_time'];
+			$temp['ordertype']     = $value['order_type'];
+			$temp['state']         = $value['state'];
+			$temp['goodsName']     = $value['coach'] . ' ' . $value['title'];
+			array_push($list, $temp);
+		}
+		$map['order_type'] = '2';
+		$result            = $order->field('sp_order.*, sp_place_calendar.date, sp_place.title')->join('sp_place_calendar ON sp_place_calendar.id = sp_order.goods_id')->join('sp_place ON sp_place.place_id = sp_place_calendar.place_id ')->where($map)->select();
+		foreach ($result as $key => $value) {
+			$temp                  = null;
+			$temp['orderId']       = $value['order_id'];
+			$temp['orderNo']       = $value['order_no'];
+			$temp['orderer']       = $value['orderer'];
+			$temp['mobile']        = $value['mobile'];
+			$temp['originalPrice'] = $value['original_price'] / 100;
+			$temp['paymentPrice']  = $value['payment_price'] / 100;
+			$temp['createTime']    = $value['create_time'];
+			$temp['ordertype']     = $value['order_type'];
+			$temp['state']         = $value['state'];
+			$temp['goodsName']     = $value['date'] . ' ' . $value['title'];
+			array_push($list, $temp);
+		}
+		$ret['retcode'] = '1';
+		$ret['retmsg']  = 'success.';
+		$ret['retdata'] = $list;
 
 		echo json_encode($ret, JSON_UNESCAPED_UNICODE);
 	}

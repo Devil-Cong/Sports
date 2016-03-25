@@ -1,8 +1,8 @@
 var PlaceCalendar = function() {
-    var getDataAjax = function(jsonData){
+    var getDataAjax = function(){
         $.ajax({
             url: 'http://' + sports.phpServiceInterface + '/index.php/Home/ManageInterface/queryPlaceCalendar',
-            data: 'json_data=' + jsonData,
+            data: 'json_data=' + JSON.stringify({ placeId : sports.$_GET('placeId'), month : PlaceCalendar.selectMonth }),
             type: 'post',
             cache: false,
             dataType: 'json',
@@ -177,18 +177,64 @@ var PlaceCalendar = function() {
 
             }
         });
+    },
+    initOrderFormValidate = function(){
+        $('.orderForm').validate({
+            errorElement: 'span',
+            errorClass: 'help-block',
+            focusInvalid: true,
+            ignore: '',
+            rules: {
+                orderer: {
+                    required: true
+                },
+                mobile: {
+                    required: true,
+                    isMobile: true
+                }
+            },
+            messages: {
+                price: {
+                    required: "Orderer is required."
+                },
+                mobile: {
+                    required: "Mobile is required.",                    
+                    isMobile: "It must be mobile phone number."
+                }
+            },
+            invalidHandler: function(event, validator) {
+
+            },
+            highlight: function(element) {
+                $(element)
+                    .closest('.form-group').addClass('has-error');
+            },
+            success: function(label) {
+                label.closest('.form-group').removeClass('has-error');
+                label.remove();
+            },
+            errorPlacement: function(error, element) {
+                error.insertAfter(element);
+            },
+            submitHandler: function(form) {
+
+            }
+        });
     };
 
-    window.changePattern = function(){
+    window.changePattern = function(type){
+        if( type ){
+            PlaceCalendar.orderPattern = !PlaceCalendar.orderPattern;
+        }
         if( PlaceCalendar.orderPattern ){
             $('.alert-info').show('400');
-            PlaceCalendar.orderPattern = !PlaceCalendar.orderPattern;
+            $('.batch-modify').hide();
             $('.price-btn').unbind().bind('click', function() {
                 window.order($(this));
             });
         }else{
             $('.alert-info').hide('400');
-            PlaceCalendar.orderPattern = !PlaceCalendar.orderPattern;
+            $('.batch-modify').show();
             $('.price-btn').unbind().bind('click', function() {
                 window.editPrice($(this));
             });
@@ -198,8 +244,40 @@ var PlaceCalendar = function() {
     window.order = function(obj){
         var objData = $(obj).parent().data('datastr');
         $('.modal-title').text('Order Place Calendar');
-        var html = template('myForm', objData);
+        var html = template('orderForm', objData);
         $('.modal-body').addClass('form').empty().html(html);
+        initOrderFormValidate();
+        $('.submit').text('Order').unbind().bind('click', function() {
+            if ($('.orderForm').validate().form()) {
+                var jsonData = JSON.stringify({ 
+                    goodsId : $('input[name="goodsId"]').val().trim(),
+                    orderer : $('input[name="orderer"]').val().trim(),
+                    mobile  : $('input[name="mobile"]').val().trim()
+                });
+                $.ajax({
+                    url: 'http://' + sports.phpServiceInterface + '/index.php/Home/Manage/addPlaceOrder',
+                    data: 'json_data=' + jsonData,
+                    type: 'post',
+                    cache: false,
+                    dataType: 'json',
+                    success: function(data) {
+                        if (data.retcode) {
+                            switch (data.retcode) {
+                                case '1':
+                                    $('.closeBtn').click();
+                                    toastr.success(data.retmsg, "Notifications");
+                                    getDataAjax();
+                                    break;
+                                default:
+                                    toastr.error(data.retmsg, "Notifications");
+                                    break;
+                            }
+                        }
+                    },
+                    error: function() {}
+                });
+            }
+        });
     };
 
     window.picker = function(){
@@ -224,11 +302,8 @@ var PlaceCalendar = function() {
         initPickerValidate();
         $('.submit').text('Select').unbind().bind('click', function() {
             if ($('.myPicker').validate().form()) {
-                var jsonData = JSON.stringify({
-                    placeId : sports.$_GET('placeId'),
-                    month   : moment($('.date-picker').datepicker('getDate')).format('YYYY-MM')
-                });
-                getDataAjax(jsonData);
+                PlaceCalendar.selectMonth = moment($('.date-picker').datepicker('getDate')).format('YYYY-MM');
+                getDataAjax();
             }
         });
     };
@@ -274,11 +349,8 @@ var PlaceCalendar = function() {
                                 case '1':
                                     $('.closeBtn').click();
                                     toastr.success(data.retmsg, "Notifications");
-                                    jsonData = JSON.stringify({
-                                        placeId : sports.$_GET('placeId'),
-                                        month   : moment($('.rangePicker').data('daterangepicker').startDate).format('YYYY-MM')
-                                    });
-                                    getDataAjax(jsonData);
+                                    PlaceCalendar.selectMonth = moment($('.rangePicker').data('daterangepicker').startDate).format('YYYY-MM');
+                                    getDataAjax();
                                     break;
                                 default:
                                     toastr.error(data.retmsg, "Notifications");
@@ -317,11 +389,8 @@ var PlaceCalendar = function() {
                                 case '1':
                                     $('.closeBtn').click();
                                     toastr.success(data.retmsg, "Notifications");
-                                    jsonData = JSON.stringify({
-                                        placeId : sports.$_GET('placeId'),
-                                        month   : objData.month
-                                    });
-                                    getDataAjax(jsonData);
+                                    PlaceCalendar.selectMonth = objData.month;
+                                    getDataAjax();
                                     break;
                                 default:
                                     toastr.error(data.retmsg, "Notifications");
@@ -367,12 +436,9 @@ var PlaceCalendar = function() {
     // };
     return {
         orderPattern : false, // default Order Pattern ?
+        selectMonth  : moment().format('YYYY-MM'),
         init    : function() {
-            var jsonData = JSON.stringify({
-                placeId : sports.$_GET('placeId'),
-                month   : moment().format('YYYY-MM')
-            });
-            getDataAjax(jsonData);
+            getDataAjax();
             getDateRangeAjax();
         }
 

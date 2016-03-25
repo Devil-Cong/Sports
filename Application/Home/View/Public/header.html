@@ -1,7 +1,7 @@
 <!-- BEGIN HEADER -->
 <div class="page-header navbar navbar-fixed-top">
     <!-- BEGIN HEADER INNER -->
-    <div class="page-header-inner container">
+    <div class="page-header-inner">
         <!-- BEGIN LOGO -->
         <div class="page-logo">
             <a href="index.html">
@@ -21,36 +21,18 @@
             <!-- BEGIN TOP NAVIGATION MENU -->
             <div class="top-menu">
                 <ul class="nav navbar-nav pull-right">
-                    <!-- BEGIN INBOX DROPDOWN -->
-                    <!-- DOC: Apply "dropdown-dark" class after below "dropdown-extended" to change the dropdown styte -->
-                    <li class="dropdown dropdown-extended dropdown-inbox">
-                        <a href="javascript:;" class="dropdown-toggle">
-                            <i class="icon-envelope-open"></i>
-                            <span class="badge badge-default">
-						4 </span>
-                        </a>
-                        <!-- DOC: Because the CSS style, the "ul" must be here, although it is useless -->
-                        <ul></ul>
-                    </li>
-                    <!-- END INBOX DROPDOWN -->
                     <!-- BEGIN USER LOGIN DROPDOWN -->
                     <!-- DOC: Apply "dropdown-dark" class after below "dropdown-extended" to change the dropdown styte -->
                     <li class="dropdown dropdown-user">
                         <a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" data-close-others="true">
                             <img alt="" class="img-circle" src="__PUBLIC__/images/avatar.png" />
                             <span class="username username-hide-on-mobile">
-						Nick </span>
+						Hello <{$Think.session.user.user_name}></span>
                             <i class="fa fa-angle-down"></i>
                         </a>
                         <ul class="dropdown-menu dropdown-menu-default">
                             <li>
-                                <a href="extra_profile.html">
-                                    <i class="icon-user"></i> My Profile </a>
-                            </li>
-                            <li class="divider">
-                            </li>
-                            <li>
-                                <a href="login.html">
+                                <a href="javascript:;" onclick="logout()">
                                     <i class="icon-key"></i> Log Out </a>
                             </li>
                         </ul>

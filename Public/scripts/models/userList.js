@@ -83,7 +83,7 @@ var UserList = function() {
                 },
                 account: {
                     required: "Account is required.",
-                    isMobile: "Account must be mobile phone number"
+                    isMobile: "Account must be mobile phone number."
                 },
                 password: {
                     required: "Password is required."

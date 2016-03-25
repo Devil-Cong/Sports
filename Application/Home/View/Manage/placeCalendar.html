@@ -18,142 +18,141 @@
 <!-- DOC: Apply "page-sidebar-reversed" class to put the sidebar on the right side -->
 <!-- DOC: Apply "page-full-width" class to the body element to have full width page without the sidebar menu -->
 
-<body class="page-boxed page-header-fixed page-sidebar-closed-hide-logo page-container-bg-solid page-sidebar-closed-hide-logo">
+<body class="page-header-fixed page-sidebar-closed-hide-logo page-container-bg-solid page-sidebar-closed-hide-logo">
     <!-- BEGIN INCLUDE HEADER -->
     <include file="Public/header" />
     <!-- END INCLUDE HEADER -->
     <div class="clearfix">
     </div>
     <!-- BEGIN CONTAINER -->
-    <div class="container">
-        <div class="page-container">
-            <!-- BEGIN INCLUDE SIDEBAR -->
-            <include file="Public/sidebar" />
-            <!-- END INCLUDE SIDEBAR -->
-            <!-- BEGIN CONTENT -->
-            <div class="page-content-wrapper">
-                <div class="page-content">
-                    <!-- BEGIN SAMPLE PORTLET CONFIGURATION MODAL FORM-->
-                    <div class="modal fade" id="portlet-config" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
-                                    <h4 class="modal-title">Modal title</h4>
-                                </div>
-                                <div class="modal-body">
-                                    modal-body
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn blue submit">Save changes</button>
-                                    <button type="button" class="btn default closeBtn" data-dismiss="modal">Close</button>
-                                </div>
+    <div class="page-container">
+        <!-- BEGIN INCLUDE SIDEBAR -->
+        <include file="Public/sidebar" />
+        <!-- END INCLUDE SIDEBAR -->
+        <!-- BEGIN CONTENT -->
+        <div class="page-content-wrapper">
+            <div class="page-content">
+                <!-- BEGIN SAMPLE PORTLET CONFIGURATION MODAL FORM-->
+                <div class="modal fade" id="portlet-config" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+                                <h4 class="modal-title">Modal title</h4>
                             </div>
-                            <!-- /.modal-content -->
-                        </div>
-                        <!-- /.modal-dialog -->
-                    </div>
-                    <!-- /.modal -->
-                    <!-- END SAMPLE PORTLET CONFIGURATION MODAL FORM-->
-                    <!-- BEGIN PAGE HEADER-->
-                    <h3 class="page-title">Place Calendar Manage </h3>
-                    <div class="page-bar">
-                        <ul class="page-breadcrumb">
-                            <li>
-                                <i class="fa fa-home"></i>
-                                <span>Home</span>
-                                <i class="fa fa-angle-right"></i>
-                            </li>
-                            <li>
-                                <span>Place Calendar Manage</span>
-                            </li>
-                        </ul>
-                        <div class="page-toolbar">
-                            <div class="btn-group pull-right">
-                                <button type="button" class="btn btn-fit-height green-haze dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" data-delay="1000" data-close-others="true">
-                                Actions <i class="fa fa-angle-down"></i>
-                                </button>
-                                <ul class="dropdown-menu pull-right" role="menu">
-                                    <li>
-                                        <a href="#portlet-config" data-toggle="modal" onclick="picker()"><i class="fa fa-calendar"></i>  Select Month </a>
-                                    </li>
-                                    <li>
-                                        <a href="#portlet-config" data-toggle="modal" onclick="rangePicker()"><i class="fa fa-check-square-o"></i>  Batch Modify </a>
-                                    </li>
-                                    <if condition="$Think.session.user.user_type elt 1">
-                                    <li>
-                                        <a onclick="changePattern()"><i class="fa fa-exchange"></i>  Change Pattern </a> <!-- Admin show this button -->
-                                    </li>
-                                    </if>  
-                                </ul>
+                            <div class="modal-body">
+                                modal-body
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn blue submit">Save changes</button>
+                                <button type="button" class="btn default closeBtn" data-dismiss="modal">Close</button>
                             </div>
                         </div>
+                        <!-- /.modal-content -->
                     </div>
-                    <!-- END PAGE HEADER-->
-                    <!-- BEGIN PAGE CONTAINER-->
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="alert alert-info" style="display: none;">
-                                <center><strong>Notifications!</strong>&nbsp;&nbsp;&nbsp; You are in the Order Pattern.</center>
-                            </div>
-                            <!-- BEGIN EXAMPLE TABLE PORTLET-->
-                            <div class="portlet box red-intense">
-                                <div class="portlet-title">
-                                    <div class="caption">
-                                        <i class="fa fa-globe"></i>Place Calendar
-                                    </div>
-                                    <div class="tools">
-                                        <a href="javascript:;" class="collapse">
-                                        </a>
-                                    </div>
-                                </div>
-                                <div class="portlet-body">
-                                    <h3 class="year-month"><center>March 2016<center></h3>
-                                    <table class="table table-bordered" id="myTable">
-                                        <thead>
-                                            <tr>
-                                                <th class="cal-th">
-                                                    <center>Sunday</center>
-                                                </th>
-                                                <th class="cal-th">
-                                                    <center>Monday</center>
-                                                </th>            
-                                                <th class="cal-th">
-                                                    <center>Friday</center>
-                                                </th>          
-                                                <th class="cal-th">
-                                                    <center>Thursday</center>
-                                                </th>
-                                                <th class="cal-th">                
-                                                    <center>Wednesday</center>
-                                                </th>
-                                                <th class="cal-th">
-                                                    <center>Tuesday</center>
-                                                </th>
-                                                <th class="cal-th">
-                                                    <center>Saturday</center>
-                                                </th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                            <!-- END EXAMPLE TABLE PORTLET-->
-                        </div>
-                    </div>
-                    <!-- END PAGE CONTAINER-->
+                    <!-- /.modal-dialog -->
                 </div>
+                <!-- /.modal -->
+                <!-- END SAMPLE PORTLET CONFIGURATION MODAL FORM-->
+                <!-- BEGIN PAGE HEADER-->
+                <h3 class="page-title">Place Calendar Manage </h3>
+                <div class="page-bar">
+                    <ul class="page-breadcrumb">
+                        <li>
+                            <i class="fa fa-home"></i>
+                            <span>Home</span>
+                            <i class="fa fa-angle-right"></i>
+                        </li>
+                        <li>
+                            <span>Place Calendar Manage</span>
+                        </li>
+                    </ul>
+                    <div class="page-toolbar">
+                        <div class="btn-group pull-right">
+                            <button type="button" class="btn btn-fit-height green-haze dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" data-delay="1000" data-close-others="true">
+                            Actions <i class="fa fa-angle-down"></i>
+                            </button>
+                            <ul class="dropdown-menu pull-right" role="menu">
+                                <li>
+                                    <a href="#portlet-config" data-toggle="modal" onclick="picker()"><i class="fa fa-calendar"></i>  Select Month </a>
+                                </li>
+                                <li class="batch-modify">
+                                    <a href="#portlet-config" data-toggle="modal" onclick="rangePicker()"><i class="fa fa-check-square-o"></i>  Batch Modify </a>
+                                </li>
+                                <!-- Only the administrator can see -->
+                                <if condition="$Think.session.user.user_type lt 2">
+                                    <li>
+                                        <a onclick="changePattern(true)"><i class="fa fa-exchange"></i>  Change Pattern </a> <!-- Admin show this button -->
+                                    </li>
+                                </if>  
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <!-- END PAGE HEADER-->
+                <!-- BEGIN PAGE CONTAINER-->
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="alert alert-info" style="display: none;">
+                            <center><strong>Notifications!</strong>&nbsp;&nbsp;&nbsp; You are in the Order Pattern.</center>
+                        </div>
+                        <!-- BEGIN EXAMPLE TABLE PORTLET-->
+                        <div class="portlet box red-intense">
+                            <div class="portlet-title">
+                                <div class="caption">
+                                    <i class="fa fa-globe"></i>Place Calendar
+                                </div>
+                                <div class="tools">
+                                    <a href="javascript:;" class="collapse">
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="portlet-body">
+                                <h3 class="year-month"><center>March 2016<center></h3>
+                                <table class="table table-bordered" id="myTable">
+                                    <thead>
+                                        <tr>
+                                            <th class="cal-th">
+                                                <center>Sunday</center>
+                                            </th>
+                                            <th class="cal-th">
+                                                <center>Monday</center>
+                                            </th>            
+                                            <th class="cal-th">
+                                                <center>Friday</center>
+                                            </th>          
+                                            <th class="cal-th">
+                                                <center>Thursday</center>
+                                            </th>
+                                            <th class="cal-th">                
+                                                <center>Wednesday</center>
+                                            </th>
+                                            <th class="cal-th">
+                                                <center>Tuesday</center>
+                                            </th>
+                                            <th class="cal-th">
+                                                <center>Saturday</center>
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <!-- END EXAMPLE TABLE PORTLET-->
+                    </div>
+                </div>
+                <!-- END PAGE CONTAINER-->
             </div>
-            <!-- END CONTENT -->
         </div>
-        <!-- END CONTAINER -->
-        <!-- BEGIN INCLUDE FOOTER -->
-        <include file="Public/footer" />
-        <!-- END INCLUDE FOOTER -->
+        <!-- END CONTENT -->
     </div>
+    <!-- END CONTAINER -->
+    <!-- BEGIN INCLUDE FOOTER -->
+    <include file="Public/footer" />
+    <!-- END INCLUDE FOOTER -->
     <!-- BEGIN JAVASCRIPTS TEMPLATE -->
     <script id="tableBody" type="text/html">
         {{each list as valueList i}}
@@ -247,8 +246,8 @@
             </div>
         </form>
     </script>
-    <script id="myForm" type="text/html">
-        <form class="myForm form-horizontal form-bordered form-row-stripped">
+    <script id="orderForm" type="text/html">
+        <form class="orderForm form-horizontal form-bordered form-row-stripped">
             <div class="form-body">
                 <input type="hidden" class="form-control" name="goodsId" value="{{id}}"/>
                 <div class="form-group">
